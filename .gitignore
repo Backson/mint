@@ -1,0 +1,6 @@
+# windows build system
+msvc/x64/
+msvc/Win32/
+msvc/mint.opensdf
+msvc/mint.sdf
+msvc/mint.*.suo
