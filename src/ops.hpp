@@ -23,6 +23,7 @@ enum Op {
 	OP_INV,  // invert top value
 
 	OP_SQ,   // square
+	OP_CU,   // cube
 	OP_SQRT, // square root
 	OP_SIN,  // sine
 	OP_COS,  // cosine
@@ -40,6 +41,7 @@ enum Op {
 };
 
 int getOperandNumber(int op);
+bool isOperatorConstant(int op);
 const char *getOperatorName(int op);
 
 #endif

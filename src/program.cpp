@@ -28,7 +28,7 @@ Program::Program(const char * src) {
 	Ast ast = parser.getAst();
 
 	Optimizer optimizer;
-	optimizer.optimizePowersToIntegerExponents(&ast);
+	optimizer.optimizeDefaults(&ast);
 
 	auto program_p = &program;
 	auto constants_p = &constants;
@@ -70,69 +70,25 @@ Program::Program(const char * src) {
 void Program::print() {
 	unsigned char const * ip = program.data(); // instruction pointer
 
-	while (*ip != OP_HLT) {
-		switch (*ip++) {
+	do {
+		int op = *ip++;
+		printf("%-6s", getOperatorName(op));
+		switch (op) {
 		case OP_PSHC:
-			printf("%-6s", "PSHC");
 			printf("%-3i (%g)\n", (int) *ip, constants[*ip]);
 			ip++;
-			continue;
+			break;
 		case OP_PSHA:
-			printf("%-6s", "PSHA");
 			printf("%-3i\n", (int) *ip++);
-			continue;
-		case OP_PI:
-			printf("%-6s\n", "PI");
-			continue;
-		case OP_E:
-			printf("%-6s\n", "E");
-			continue;
-		case OP_NEG:
-			printf("%-6s\n", "NEG");
-			continue;
-		case OP_INV:
-			printf("%-6s\n", "INV");
-			continue;
-		case OP_SQRT:
-			printf("%-6s\n", "SQRT");
-			continue;
-		case OP_SIN:
-			printf("%-6s\n", "SIN");
-			continue;
-		case OP_COS:
-			printf("%-6s\n", "COS");
-			continue;
-		case OP_LOG:
-			printf("%-6s\n", "LOG");
-			continue;
-		case OP_EXP:
-			printf("%-6s\n", "EXP");
-			continue;
-		case OP_ADD:
-			printf("%-6s\n", "ADD");
-			continue;
-		case OP_SUB:
-			printf("%-6s\n", "SUB");
-			continue;
-		case OP_MUL:
-			printf("%-6s\n", "MUL");
-			continue;
-		case OP_DIV:
-			printf("%-6s\n", "DIV");
-			continue;
-		case OP_POW:
-			printf("%-6s\n", "POW");
-			continue;
+			break;
 		case OP_POWI:
-			printf("%-6s", "POWI");
 			printf("%-3i\n", SCHAR_MIN + int(*ip++));
-			continue;
+			break;
 		default:
-			printf("error decoding opcode!\n");
-			return;
+			printf("\n");
+			break;
 		}
-	}
-	printf("%-6s\n", "HLT");
+	} while (*ip != OP_HLT);
 }
 
 double Program::run(const double * arguments) {
@@ -141,6 +97,8 @@ double Program::run(const double * arguments) {
 
 	while (*ip != OP_HLT) {
 		switch (*ip++) {
+		case OP_NOOP:
+			break;
 		case OP_PSHC:
 			*++sp = constants[*ip++];
 			continue;
@@ -158,6 +116,12 @@ double Program::run(const double * arguments) {
 			continue;
 		case OP_INV:
 			sp[0] = 1 / sp[0];
+			continue;
+		case OP_SQ:
+			sp[0] = sp[0] * sp[0];
+			continue;
+		case OP_CU:
+			sp[0] = sp[0] * sp[0] * sp[0];
 			continue;
 		case OP_SQRT:
 			sp[0] = sqrt(sp[0]);

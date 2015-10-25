@@ -11,8 +11,10 @@ class Optimizer {
 public:
 	Optimizer() = default;
 	~Optimizer() = default;
-
+	
 	void optimizePowersToIntegerExponents(Ast *);
+	void optimizeConstantFolding(Ast *);
+	void optimizeDefaults(Ast *);
 private:
 
 };
