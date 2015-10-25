@@ -6,19 +6,20 @@
 #define PROGRAM_HPP_
 
 #include <exception>
+#include <vector>
 
 class Program {
 public:
 	Program(const char * src);
-	~Program();
+	~Program() = default;
 
 	void print();
 
 	double run(const double * arguments);
 
 private:
-	unsigned char * program = nullptr;
-	double * constants = nullptr;
+	std::vector<unsigned char> program;
+	std::vector<double> constants;
 	double stack[100];
 };
 

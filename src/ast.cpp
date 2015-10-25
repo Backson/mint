@@ -14,7 +14,7 @@ static void print(const Ast &ast, int indent) {
 		printf(" %d\n", ast.i);
 		break;
 	case OP_PSHC:
-		printf(" %f\n", ast.d);
+		printf(" %g\n", ast.d);
 		break;
 	default:
 		printf("\n");

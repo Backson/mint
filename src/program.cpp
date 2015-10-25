@@ -11,6 +11,7 @@
 #include <cstring>
 #include <cstdio>
 #include <climits>
+#include <functional>
 
 Program::Program(const char * src) {
 	Parser parser(src);
@@ -21,28 +22,53 @@ Program::Program(const char * src) {
 		getchar();
 		throw std::runtime_error("parsing error");
 	}
-	/*
-	program = new unsigned char[parser.getProgramSize()];
-	memcpy(program, parser.getProgram(), parser.getProgramSize() * sizeof(unsigned char));
-	constants = new double[parser.getConstantCount()];
-	memcpy(constants, parser.getConstants(), parser.getConstantCount() * sizeof(double));
-	*/
-	::print(parser.getAst());
-}
+	
+	auto program_p = &program;
+	auto constants_p = &constants;
+	std::function<void(const Ast &ast)> visitor_lambda =
+	[program_p, constants_p, &visitor_lambda](const Ast &ast) {
+		for (const Ast &child : ast.children) {
+			visitor_lambda(child);
+		}
+		program_p->push_back(ast.op);
+		switch (ast.op) {
+		case OP_PSHC:
+			program_p->push_back(constants_p->size());
+			constants_p->push_back(ast.d);
+			break;
+		case OP_PSHA:
+			program_p->push_back(unsigned char(ast.i));
+			break;
+		case OP_POWI:
+			program_p->push_back(unsigned char(ast.i - SCHAR_MIN));
+			break;
+		default:
+			break;
+		}
+	};
 
-Program::~Program() {
-	if (program) delete[] program;
-	if (constants) delete[] constants;
+	visitor_lambda(parser.getAst());
+
+	/*
+	printf("AST:\n");
+	::print(parser.getAst());
+	printf("\n");
+	
+	printf("Program:\n");
+	this->print();
+	printf("\n");
+	*/
 }
 
 void Program::print() {
-	unsigned char const * ip = program; // instruction pointer
+	unsigned char const * ip = program.data(); // instruction pointer
 
 	while (*ip != OP_HLT) {
 		switch (*ip++) {
 		case OP_PSHC:
 			printf("%-6s", "PSHC");
-			printf("%-3i\n", (int) *ip++);
+			printf("%-3i (%g)\n", (int) *ip, constants[*ip]);
+			ip++;
 			continue;
 		case OP_PSHA:
 			printf("%-6s", "PSHA");
@@ -103,7 +129,7 @@ void Program::print() {
 }
 
 double Program::run(const double * arguments) {
-	unsigned char const * ip = program; // instruction pointer
+	unsigned char const * ip = program.data(); // instruction pointer
 	double * sp = stack - 1; // stack pointer
 
 	while (*ip != OP_HLT) {
