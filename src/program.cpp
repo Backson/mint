@@ -21,10 +21,13 @@ Program::Program(const char * src) {
 		getchar();
 		throw std::runtime_error("parsing error");
 	}
+	/*
 	program = new unsigned char[parser.getProgramSize()];
 	memcpy(program, parser.getProgram(), parser.getProgramSize() * sizeof(unsigned char));
 	constants = new double[parser.getConstantCount()];
 	memcpy(constants, parser.getConstants(), parser.getConstantCount() * sizeof(double));
+	*/
+	::print(parser.getAst());
 }
 
 Program::~Program() {

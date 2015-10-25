@@ -9,6 +9,8 @@
 #include <cstring>
 #include <stack>
 
+#include "ast.hpp"
+
 enum State {
 	TERM,
 	START,
@@ -137,6 +139,8 @@ Token Scanner::getNextToken() {
 
 int Parser::parse() {
 	std::stack<Token> stack;
+	ast.op = OP_HLT;
+	ast.i = 0;
 	lastTokenId = TOK_NONE;
 	lastOp = -1;
 	tok = scanner.getNextToken();
@@ -181,8 +185,7 @@ int Parser::parse() {
 					raiseError("argument number out of range");
 					return 1;
 				}
-				emitOp(OP_PSHA);
-				program.push_back(unsigned char(tok.i));
+				emitOp(OP_PSHA, unsigned char(tok.i));
 				break;
 
 			case TOK_LIT:
@@ -190,9 +193,7 @@ int Parser::parse() {
 					raiseError("unexpected primary value");
 					return 1;
 				}
-				emitOp(OP_PSHC);
-				program.push_back(constants.size());
-				constants.push_back(tok.d);
+				emitOp(OP_PSHC, tok.d);
 				break;
 
 			case TOK_F_PI:
@@ -310,28 +311,34 @@ int Parser::parse() {
 			stack.pop();
 		}
 	}
-	emitOp(OP_HLT);
 	return 0;
 }
 
-void Parser::emitOp(int op) {
-	if (op == OP_POW && lastOp == OP_PSHC) {
-		double constant = constants[program.back()];
-		long i = long(constant);
-		if (constant == constant && constant == i && SCHAR_MIN <= i && i <= SCHAR_MAX) {
-			program.pop_back();
-			program.pop_back();
-			constants.pop_back();
-			if (i != 1) {
-				program.push_back(OP_POWI);
-				program.push_back(unsigned char(i - SCHAR_MIN));
-				lastOp = OP_POWI;
-			}
-			return;
-		}
+void Parser::emitOp(int op, int i) {
+	Ast ast;
+	ast.op = op;
+	ast.i = i;
+	emitOp(ast);
+}
+
+void Parser::emitOp(int op, double d) {
+	Ast ast;
+	ast.op = op;
+	ast.d = d;
+	emitOp(ast);
+}
+
+void Parser::emitOp(Ast &ast) {
+	if (ast.op == OP_HLT)
+		return;
+	int n = getOperandNumber(ast.op);
+	ast.children.resize(n);
+	for (int i = 0; i < n; ++i) {
+		ast.children[n - i - 1] = this->ast.children.back();
+		this->ast.children.pop_back();
 	}
-	program.push_back(op);
-	lastOp = op;
+	this->ast.children.push_back(ast);
+	lastOp = ast.op;
 }
 
 void Parser::raiseError(const char * reason) {

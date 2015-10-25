@@ -7,6 +7,7 @@
 
 #include "ops.hpp"
 #include "tokens.hpp"
+#include "ast.hpp"
 
 #include <vector>
 
@@ -31,21 +32,18 @@ public:
 	const char * getError() { return error; }
 	Token getLastToken() { return tok; }
 
-	const unsigned char * getProgram() { return program.data(); }
-	const double * getConstants() { return constants.data(); }
-
-	int getProgramSize() const { return program.size(); }
-	int getConstantCount() const { return constants.size(); }
+	Ast &getAst() { return ast; }
 
 private:
 	void raiseError(const char * reason);
-
-	void emitOp(int op);
+	
+	void emitOp(int op, int i = 0);
+	void emitOp(int op, double d);
+	void emitOp(Ast &ast);
 
 	Scanner scanner;
-	std::vector<unsigned char> program;
-	std::vector<double> constants;
 	Token tok;
+	Ast ast;
 	int lastTokenId;
 	int lastOp;
 	const char * error = nullptr;

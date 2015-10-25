@@ -39,4 +39,7 @@ enum Op {
 	OP_POW,  // first value to the second value's power
 };
 
+int getOperandNumber(int op);
+const char *getOperatorName(int op);
+
 #endif
