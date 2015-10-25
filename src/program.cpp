@@ -37,7 +37,8 @@ Program::Program(const char * src) {
 		for (const Ast &child : ast.children) {
 			visitor_lambda(child);
 		}
-		program_p->push_back(ast.op);
+		if (ast.op != OP_NOOP)
+			program_p->push_back(ast.op);
 		switch (ast.op) {
 		case OP_PSHC:
 			program_p->push_back(constants_p->size());
@@ -55,16 +56,6 @@ Program::Program(const char * src) {
 	};
 
 	visitor_lambda(ast);
-
-	/*
-	printf("AST:\n");
-	::print(parser.getAst());
-	printf("\n");
-	
-	printf("Program:\n");
-	this->print();
-	printf("\n");
-	*/
 }
 
 void Program::print() {
