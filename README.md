@@ -1,5 +1,5 @@
 # MINT
-MINT is a Math INTerpreter.  I created it as a personal exercise, but also put it up here so you can use it and learn from it too.  It is heavily inspired by [ROOT 5](root.cern.ch/), which I used during my studies.  You can check out other mathematical expression parsers at [this benchmark](code.google.com/p/math-parser-benchmark-project/).
+MINT is a Math INTerpreter.  I created it as a personal exercise, but also put it up here so you can use it and learn from it too.  It is heavily inspired by [ROOT 5](https://root.cern.ch/), which I used during my studies.  You can check out other mathematical expression parsers at [this benchmark](https://code.google.com/p/math-parser-benchmark-project/).
 
 ## License
 
