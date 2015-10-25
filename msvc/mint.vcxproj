@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\ast.hpp" />
     <ClInclude Include="..\src\ops.hpp" />
+    <ClInclude Include="..\src\optimizations.hpp" />
     <ClInclude Include="..\src\parser.hpp" />
     <ClInclude Include="..\src\program.hpp" />
     <ClInclude Include="..\src\tokens.hpp" />
@@ -131,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\ast.cpp" />
     <ClCompile Include="..\src\ops.cpp" />
+    <ClCompile Include="..\src\optimizations.cpp" />
     <ClCompile Include="..\src\parser.cpp" />
     <ClCompile Include="..\src\program.cpp" />
     <ClCompile Include="..\src\tokens.cpp" />

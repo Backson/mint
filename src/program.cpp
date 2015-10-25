@@ -8,6 +8,8 @@
 #include "tokens.hpp"
 #include "parser.hpp"
 
+#include "optimizations.hpp"
+
 #include <cstring>
 #include <cstdio>
 #include <climits>
@@ -22,7 +24,12 @@ Program::Program(const char * src) {
 		getchar();
 		throw std::runtime_error("parsing error");
 	}
-	
+
+	Ast ast = parser.getAst();
+
+	Optimizer optimizer;
+	optimizer.optimizePowersToIntegerExponents(&ast);
+
 	auto program_p = &program;
 	auto constants_p = &constants;
 	std::function<void(const Ast &ast)> visitor_lambda =
@@ -47,7 +54,7 @@ Program::Program(const char * src) {
 		}
 	};
 
-	visitor_lambda(parser.getAst());
+	visitor_lambda(ast);
 
 	/*
 	printf("AST:\n");
