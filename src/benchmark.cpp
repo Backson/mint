@@ -12,6 +12,7 @@
 typedef double (*func_t)(const double *);
 
 static const double pi = 3.14159265358979323846264338327950288419716939937510;
+static const double e  = 2.71828182845904523536028747135266249775724709369995;
 
 void test(int N, int NARGS, double ** data, const char * program_str, func_t native_f) {
 	using namespace std::chrono;
@@ -155,9 +156,23 @@ double native_ex_plusses(const double * d) {
 	return d[0] + d[0];
 }
 
+double native_ex_long(const double *d) {
+	double x = d[0];
+	double y = d[1];
+	double z = d[2];
+	double w = d[3];
+	return ((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))));
+}
+
+double native_ex_long2(const double *d) {
+	double a = d[0];
+	double b = d[1];
+	return tan((((cos(tan(((tan((((1.92 + (pi / (pi - sin((cos(((((tan((((sin((((sin((0.40 + cos((tan((tan((((sin(((((((e + 2.58) + 3.88) + b) - b) + a) + e))*0.10) + a) + b))*e))*a)))) + a) + pi) / 0.78)) + a) / pi)*3.29))*a) / b) / 2.71)*3.53)) + 1.87))))) / 2.72) / e)) / a) + 0.49))) + pi) + a) - b));
+}
+
 int main(int argc, char *argv[]) {
 	static const int N = 1000000;
-	static const int MAXNARGS = 3;
+	static const int MAXNARGS = 4;
 
 	// prepare some input data
 	double *data[MAXNARGS];
@@ -191,7 +206,8 @@ int main(int argc, char *argv[]) {
 	test(N, 3, &data[0], "exp(-0.5*((x-z)/y)^2)/(sqrt(2*pi)*y)", &native_gaus);
 	test(N, 3, &data[0], "tan(x) + trunc(y) + cos(abs(z)) - floor(x) + arctan(5) - arcosh(pi)", &native_ex_functions);
 	test(N, 1, &data[0], "+ + + + x + + + x", &native_ex_plusses);
-
+	test(N, 4, &data[0], "((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))))", &native_ex_long);
+	test(N, 2, &data[0], "tan((((cos(tan(((tan((((1.92+(pi/(pi-sin((cos(((((tan((((sin((((sin((0.40+cos((tan((tan((((sin(((((((e+2.58)+3.88)+b)-b)+a)+e))*0.10)+a)+b))*e))*a))))+a)+pi)/0.78))+a)/pi)*3.29))*a)/b)/2.71)*3.53))+1.87)))))/2.72)/e))/a)+0.49)))+pi)+a)-b))", &native_ex_long2);
 
 	for (int i = 0; i < MAXNARGS; ++i) {
 		delete[] data[i];

@@ -87,73 +87,98 @@ Token Scanner::getNextToken() {
 			}
 			state = TERM;
 			continue;
-		case IDENT:
+		case IDENT: {
 			while (isalpha(*next))
 				++next;
-			if (strncmp("pi", tok.start, next - tok.start) == 0) {
+
+			bool (*cmp)(const char *, const char *, const char *) =
+			[](const char *word, const char *start, const char *end) -> bool {
+				auto diff = end - start;
+				if (strlen(word) != diff)
+					return false;
+				return strncmp(word, start, diff) == 0;
+			};
+
+			if (cmp("pi", tok.start, next)) {
 				tok.id = TOK_F_PI;
-			} else if (strncmp("e", tok.start, next - tok.start) == 0) {
+			} else if (cmp("e", tok.start, next)) {
 				tok.id = TOK_F_E;
-			} else if (strncmp("sqrt", tok.start, next - tok.start) == 0) {
+			} else if (cmp("sqrt", tok.start, next)) {
 				tok.id = TOK_F_SQRT;
-			} else if (strncmp("sin", tok.start, next - tok.start) == 0) {
+			} else if (cmp("sin", tok.start, next)) {
 				tok.id = TOK_F_SIN;
-			} else if (strncmp("cos", tok.start, next - tok.start) == 0) {
+			} else if (cmp("cos", tok.start, next)) {
 				tok.id = TOK_F_COS;
-			} else if (strncmp("tan", tok.start, next - tok.start) == 0) {
+			} else if (cmp("tan", tok.start, next)) {
 				tok.id = TOK_F_TAN;
-			} else if (strncmp("arcsin", tok.start, next - tok.start) == 0) {
+			} else if (cmp("arcsin", tok.start, next)) {
 				tok.id = TOK_F_ASIN;
-			} else if (strncmp("arccos", tok.start, next - tok.start) == 0) {
+			} else if (cmp("arccos", tok.start, next)) {
 				tok.id = TOK_F_ACOS;
-			} else if (strncmp("arctan", tok.start, next - tok.start) == 0) {
+			} else if (cmp("arctan", tok.start, next)) {
 				tok.id = TOK_F_ATAN;
-			} else if (strncmp("sinh", tok.start, next - tok.start) == 0) {
+			} else if (cmp("sinh", tok.start, next)) {
 				tok.id = TOK_F_SINH;
-			} else if (strncmp("cosh", tok.start, next - tok.start) == 0) {
+			} else if (cmp("cosh", tok.start, next)) {
 				tok.id = TOK_F_COSH;
-			} else if (strncmp("tanh", tok.start, next - tok.start) == 0) {
+			} else if (cmp("tanh", tok.start, next)) {
 				tok.id = TOK_F_TANH;
-			} else if (strncmp("arsinh", tok.start, next - tok.start) == 0) {
+			} else if (cmp("arsinh", tok.start, next)) {
 				tok.id = TOK_F_ASINH;
-			} else if (strncmp("arcosh", tok.start, next - tok.start) == 0) {
+			} else if (cmp("arcosh", tok.start, next)) {
 				tok.id = TOK_F_ACOSH;
-			} else if (strncmp("artanh", tok.start, next - tok.start) == 0) {
+			} else if (cmp("artanh", tok.start, next)) {
 				tok.id = TOK_F_ATANH;
-			} else if (strncmp("exp", tok.start, next - tok.start) == 0) {
+			} else if (cmp("exp", tok.start, next)) {
 				tok.id = TOK_F_EXP;
-			} else if (strncmp("log", tok.start, next - tok.start) == 0) {
+			} else if (cmp("log", tok.start, next)) {
 				tok.id = TOK_F_LOG;
-			} else if (strncmp("erf", tok.start, next - tok.start) == 0) {
+			} else if (cmp("erf", tok.start, next)) {
 				tok.id = TOK_F_ERF;
-			} else if (strncmp("erfc", tok.start, next - tok.start) == 0) {
+			} else if (cmp("erfc", tok.start, next)) {
 				tok.id = TOK_F_ERFC;
-			} else if (strncmp("abs", tok.start, next - tok.start) == 0) {
+			} else if (cmp("abs", tok.start, next)) {
 				tok.id = TOK_F_ABS;
-			} else if (strncmp("floor", tok.start, next - tok.start) == 0) {
+			} else if (cmp("floor", tok.start, next)) {
 				tok.id = TOK_F_FLOOR;
-			} else if (strncmp("ceil", tok.start, next - tok.start) == 0) {
+			} else if (cmp("ceil", tok.start, next)) {
 				tok.id = TOK_F_CEIL;
-			} else if (strncmp("round", tok.start, next - tok.start) == 0) {
+			} else if (cmp("round", tok.start, next)) {
 				tok.id = TOK_F_ROUND;
-			} else if (strncmp("trunc", tok.start, next - tok.start) == 0) {
+			} else if (cmp("trunc", tok.start, next)) {
 				tok.id = TOK_F_TRUNC;
-			} else if (strncmp("pow", tok.start, next - tok.start) == 0) {
+			} else if (cmp("pow", tok.start, next)) {
 				tok.id = TOK_F_POW;
-			} else if (strncmp("x", tok.start, next - tok.start) == 0) {
+			} else if (cmp("x", tok.start, next)) {
 				tok.id = TOK_ARG;
 				tok.i = 0;
-			} else if (strncmp("y", tok.start, next - tok.start) == 0) {
+			} else if (cmp("y", tok.start, next)) {
 				tok.id = TOK_ARG;
 				tok.i = 1;
-			} else if (strncmp("z", tok.start, next - tok.start) == 0) {
+			} else if (cmp("z", tok.start, next)) {
 				tok.id = TOK_ARG;
 				tok.i = 2;
+			} else if (cmp("w", tok.start, next)) {
+				tok.id = TOK_ARG;
+				tok.i = 3;
+			} else if (cmp("a", tok.start, next)) {
+				tok.id = TOK_ARG;
+				tok.i = 0;
+			} else if (cmp("b", tok.start, next)) {
+				tok.id = TOK_ARG;
+				tok.i = 1;
+			} else if (cmp("c", tok.start, next)) {
+				tok.id = TOK_ARG;
+				tok.i = 2;
+			} else if (cmp("d", tok.start, next)) {
+				tok.id = TOK_ARG;
+				tok.i = 3;
 			} else {
 				tok.id = TOK_IDENT;
 			}
 			state = TERM;
 			continue;
+		}
 		case CONST:
 			char * end = nullptr;
 			tok.d = strtod(next, const_cast<char **>(&end));
