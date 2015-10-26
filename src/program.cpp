@@ -41,10 +41,24 @@ Program::Program(const char * src) {
 		if (ast.op != OP_NOOP)
 			program_p->push_back(ast.op);
 		switch (ast.op) {
-		case OP_CONST:
-			program_p->push_back((unsigned char)constants_p->size());
-			constants_p->push_back(ast.d);
+		case OP_CONST: {
+			// prevent the exact same constant from being stored twice
+			int constant_index = -1;
+			for (unsigned i = 0; i < constants_p->size(); ++i) {
+				double c = (*constants_p)[i];
+				if (ast.d == c) {
+					constant_index = i;
+					break;
+				}
+			}
+			if (constant_index >= 0) {
+				program_p->push_back((unsigned char)constant_index);
+			} else {
+				program_p->push_back((unsigned char)constants_p->size());
+				constants_p->push_back(ast.d);
+			}
 			break;
+		}
 		case OP_ARG:
 			program_p->push_back(unsigned char(ast.i));
 			break;
