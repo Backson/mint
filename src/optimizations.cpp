@@ -118,6 +118,31 @@ void Optimizer::collapseSigns(Ast *ast) {
 	visitor_lambda(ast);
 }
 
+void Optimizer::compressStack(Ast *ast) {
+	std::function<int(Ast *ast)> visitor_lambda =
+	[&visitor_lambda](Ast *ast) -> int {
+		std::vector<int> sizes;
+		sizes.resize(ast->children.size());
+		for (unsigned i = 0; i < sizes.size(); ++i) {
+			sizes[i] = visitor_lambda(&ast->children[i]);
+		}
+		if (ast->op == OP_ADD || ast->op == OP_MUL) {
+			if (sizes[0] < sizes[1]) {
+				std::swap(sizes[0], sizes[1]);
+				std::swap(ast->children[0], ast->children[1]);
+			}
+		}
+		int max_size = -1;
+		for (unsigned i = 0; i < sizes.size(); ++i) {
+			int cur_size = sizes[i] + i;
+			if (max_size < cur_size)
+				max_size = cur_size;
+		}
+		return max_size;
+	};
+	visitor_lambda(ast);
+}
+
 void Optimizer::optimizeDefaults(Ast *ast) {
 	optimizeAll(ast);
 }
@@ -126,4 +151,5 @@ void Optimizer::optimizeAll(Ast *ast) {
 	optimizePowersToIntegerExponents(ast);
 	collapseConstants(ast);
 	collapseSigns(ast);
+	compressStack(ast);
 }

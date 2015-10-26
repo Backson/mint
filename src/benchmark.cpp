@@ -176,6 +176,14 @@ double native_ex20(const double *d) {
 	return a + b;
 }
 
+double native_ex21(const double *d) {
+	double x = d[0];
+	double y = d[1];
+	double z = d[2];
+	double w = d[3];
+	return x + (y * (z + w));
+}
+
 int main(int argc, char *argv[]) {
 	static const int N = 1000000;
 	static const int MAXNARGS = 4;
@@ -215,6 +223,7 @@ int main(int argc, char *argv[]) {
 	test(N, 4, &data[0], "((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))))", &native_ex18);
 	test(N, 2, &data[0], "tan((((cos(tan(((tan((((1.92+(pi/(pi-sin((cos(((((tan((((sin((((sin((0.40+cos((tan((tan((((sin(((((((e+2.58)+3.88)+b)-b)+a)+e))*0.10)+a)+b))*e))*a))))+a)+pi)/0.78))+a)/pi)*3.29))*a)/b)/2.71)*3.53))+1.87)))))/2.72)/e))/a)+0.49)))+pi)+a)-b))", &native_ex19);
 	test(N, 2, &data[0], "- (- - + - a) + (((((((a)+b))-b)))) + b - ((a))", &native_ex20);
+	test(N, 4, &data[0], "x + (y * (z + w))", &native_ex21);
 
 	for (int i = 0; i < MAXNARGS; ++i) {
 		delete[] data[i];

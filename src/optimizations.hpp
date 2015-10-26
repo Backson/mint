@@ -15,6 +15,7 @@ public:
 	void optimizePowersToIntegerExponents(Ast *);
 	void collapseConstants(Ast *);
 	void collapseSigns(Ast *);
+	void compressStack(Ast *);
 
 	void optimizeDefaults(Ast *);
 	void optimizeAll(Ast *);
