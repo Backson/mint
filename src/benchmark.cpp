@@ -44,42 +44,42 @@ void test(int N, int NARGS, double ** data, const char * program_str, func_t nat
 	}
 
 	// benchmarks
-	steady_clock::time_point t1, t2;
+	high_resolution_clock::time_point t1, t2;
 
 	// overhead
 	double sum1 = 0.0;
-	t1 = steady_clock::now();
+	t1 = high_resolution_clock::now();
 	for (int i = 0; i < N; ++i) {
 		params[0] = data[0][i];
 		params[1] = data[1][i];
 		params[2] = data[2][i];
 		sum1 += params[0];
 	}
-	t2 = steady_clock::now();
+	t2 = high_resolution_clock::now();
 	double time_offset = duration_cast<duration<double>>(t2 - t1).count();
 
 	// native
 	double sum2 = 0.0;
-	t1 = steady_clock::now();
+	t1 = high_resolution_clock::now();
 	for (int i = 0; i < N; ++i) {
 		params[0] = data[0][i];
 		params[1] = data[1][i];
 		params[2] = data[2][i];
 		sum2 += native_f(params);
 	}
-	t2 = steady_clock::now();
+	t2 = high_resolution_clock::now();
 	double time_reference = duration_cast<duration<double>>(t2 - t1).count() - time_offset;
 	
 	// mint
 	double sum3 = 0.0;
-	t1 = steady_clock::now();
+	t1 = high_resolution_clock::now();
 	for (int i = 0; i < N; ++i) {
 		params[0] = data[0][i];
 		params[1] = data[1][i];
 		params[2] = data[2][i];
 		sum3 += p.run(params);
 	}
-	t2 = steady_clock::now();
+	t2 = high_resolution_clock::now();
 	double time_program = duration_cast<duration<double>>(t2 - t1).count() - time_offset;
 
 	printf("%12s %12s %12s\n", "",
@@ -95,19 +95,6 @@ void test(int N, int NARGS, double ** data, const char * program_str, func_t nat
 	printf("%12s %12.4f %12.4e\n", "max error", 0.0,
 		sqrt(mint_error_max));
 	printf("\n");
-}
-
-double native_gaus(const double * d) {
-	double x = (d[0] - d[2]) / d[1];
-	return exp(-0.5 * x * x) / (sqrt(2 * pi) * d[1]);
-}
-
-double native_square(const double * d) {
-	return d[0] * d[0];
-}
-
-double native_unity(const double * d) {
-	return d[0];
 }
 
 double native_ex1(const double * d) {
@@ -158,8 +145,25 @@ double native_ex12(const double * d) {
 	return d[0] + (cos(d[1] - sin(2 / d[0] * pi)) - sin(d[0] - cos(2 * d[1] / pi))) - d[1];
 }
 
+double native_unity(const double * d) {
+	return d[0];
+}
+
+double native_square(const double * d) {
+	return d[0] * d[0];
+}
+
+double native_gaus(const double * d) {
+	double x = (d[0] - d[2]) / d[1];
+	return exp(-0.5 * x * x) / (sqrt(2 * pi) * d[1]);
+}
+
+double native_ex_functions(const double * d) {
+	return tan(d[0]) + trunc(d[1]) + cos(abs(d[2])) - floor(d[0]) + atan(5) - acosh(pi);
+}
+
 int main(int argc, char *argv[]) {
-	static const int N = 10000000;
+	static const int N = 100000;
 	static const int MAXNARGS = 3;
 
 	// prepare some input data
@@ -192,6 +196,7 @@ int main(int argc, char *argv[]) {
 	test(N, 1, &data[0], "x", &native_unity);
 	test(N, 1, &data[0], "x^2", &native_square);
 	test(N, 3, &data[0], "exp(-0.5*((x-z)/y)^2)/(sqrt(2*pi)*y)", &native_gaus);
+	test(N, 3, &data[0], "tan(x) + trunc(y) + cos(abs(z)) - floor(x) + arctan(5) - arcosh(pi)", &native_ex_functions);
 
 	for (int i = 0; i < MAXNARGS; ++i) {
 		delete[] data[i];

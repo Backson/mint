@@ -13,7 +13,7 @@ void Optimizer::optimizePowersToIntegerExponents(Ast *ast) {
 	[&visitor_lambda](Ast *ast) {
 		if (ast->op == OP_POW && ast->children.size() == 2) {
 			Ast *child = &ast->children[1];
-			if (child->op == OP_PSHC) {
+			if (child->op == OP_CONST) {
 				double constant = child->d;
 				long i = long(constant);
 				if (constant == constant && constant == i && SCHAR_MIN <= i && i <= SCHAR_MAX) {
@@ -88,11 +88,62 @@ void Optimizer::optimizeConstantFolding(Ast *ast) {
 		case OP_COS:
 			d = cos(ast->children[0].d);
 			break;
+		case OP_TAN:
+			d = tan(ast->children[0].d);
+			break;
+		case OP_ASIN:
+			d = asin(ast->children[0].d);
+			break;
+		case OP_ACOS:
+			d = acos(ast->children[0].d);
+			break;
+		case OP_ATAN:
+			d = atan(ast->children[0].d);
+			break;
+		case OP_SINH:
+			d = sinh(ast->children[0].d);
+			break;
+		case OP_COSH:
+			d = cosh(ast->children[0].d);
+			break;
+		case OP_TANH:
+			d = tanh(ast->children[0].d);
+			break;
+		case OP_ASINH:
+			d = asinh(ast->children[0].d);
+			break;
+		case OP_ACOSH:
+			d = acosh(ast->children[0].d);
+			break;
+		case OP_ATANH:
+			d = atanh(ast->children[0].d);
+			break;
 		case OP_LOG:
 			d = log(ast->children[0].d);
 			break;
 		case OP_EXP:
 			d = exp(ast->children[0].d);
+			break;
+		case OP_ERF:
+			d = erf(ast->children[0].d);
+			break;
+		case OP_ERFC:
+			d = erfc(ast->children[0].d);
+			break;
+		case OP_ABS:
+			d = abs(ast->children[0].d);
+			break;
+		case OP_FLOOR:
+			d = floor(ast->children[0].d);
+			break;
+		case OP_CEIL:
+			d = ceil(ast->children[0].d);
+			break;
+		case OP_ROUND:
+			d = round(ast->children[0].d);
+			break;
+		case OP_TRUNC:
+			d = trunc(ast->children[0].d);
 			break;
 		case OP_ADD:
 			d = ast->children[0].d + ast->children[1].d;
@@ -115,7 +166,7 @@ void Optimizer::optimizeConstantFolding(Ast *ast) {
 		}
 		if (is_operator) {
 			ast->children.clear();
-			ast->op = OP_PSHC;
+			ast->op = OP_CONST;
 			ast->d = d;
 		}
 	};

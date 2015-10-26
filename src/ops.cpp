@@ -7,8 +7,7 @@
 int getOperandNumber(int op) {
 	static const int data[] = {
 		0, 0, 0, 0, 0, 0,
-		1, 1,
-		1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		2, 2, 2, 2, 2
 	};
 	return data[op];
@@ -17,8 +16,7 @@ int getOperandNumber(int op) {
 bool isOperatorConstant(int op) {
 	static const int data[] = {
 		0, 0, 1, 0, 1, 1,
-		0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0
 	};
 	return data[op] != 0;
@@ -28,8 +26,8 @@ const char *getOperatorName(int op) {
 	static const char *data[] = {
 		"HLT",
 		"NOOP",
-		"PSHC",
-		"PSHA",
+		"CONST",
+		"ARG",
 		"PI",
 		"E",
 		"NEG",
@@ -39,8 +37,25 @@ const char *getOperatorName(int op) {
 		"SQRT",
 		"SIN",
 		"COS",
+		"TAN",
+		"ASIN",
+		"ACOS",
+		"ATAN",
+		"SINH",
+		"COSH",
+		"TANH",
+		"ASINH",
+		"ACOSH",
+		"ATANH",
 		"EXP",
 		"LOG",
+		"ERF",
+		"ERFC",
+		"ABS",
+		"FLOOR",
+		"CEIL",
+		"ROUND",
+		"TRUNC",
 		"POWI",
 		"ADD",
 		"SUB",

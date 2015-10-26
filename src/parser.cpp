@@ -100,10 +100,44 @@ Token Scanner::getNextToken() {
 				tok.id = TOK_F_SIN;
 			} else if (strncmp("cos", tok.start, next - tok.start) == 0) {
 				tok.id = TOK_F_COS;
+			} else if (strncmp("tan", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_TAN;
+			} else if (strncmp("arcsin", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ASIN;
+			} else if (strncmp("arccos", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ACOS;
+			} else if (strncmp("arctan", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ATAN;
+			} else if (strncmp("sinh", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_SINH;
+			} else if (strncmp("cosh", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_COSH;
+			} else if (strncmp("tanh", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_TANH;
+			} else if (strncmp("arsinh", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ASINH;
+			} else if (strncmp("arcosh", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ACOSH;
+			} else if (strncmp("artanh", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ATANH;
 			} else if (strncmp("exp", tok.start, next - tok.start) == 0) {
 				tok.id = TOK_F_EXP;
 			} else if (strncmp("log", tok.start, next - tok.start) == 0) {
 				tok.id = TOK_F_LOG;
+			} else if (strncmp("erf", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ERF;
+			} else if (strncmp("erfc", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ERFC;
+			} else if (strncmp("abs", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ABS;
+			} else if (strncmp("floor", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_FLOOR;
+			} else if (strncmp("ceil", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_CEIL;
+			} else if (strncmp("round", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_ROUND;
+			} else if (strncmp("trunc", tok.start, next - tok.start) == 0) {
+				tok.id = TOK_F_TRUNC;
 			} else if (strncmp("pow", tok.start, next - tok.start) == 0) {
 				tok.id = TOK_F_POW;
 			} else if (strncmp("x", tok.start, next - tok.start) == 0) {
@@ -185,7 +219,7 @@ int Parser::parse() {
 					raiseError("argument number out of range");
 					return 1;
 				}
-				emitOp(OP_PSHA, unsigned char(tok.i));
+				emitOp(OP_ARG, unsigned char(tok.i));
 				break;
 
 			case TOK_LIT:
@@ -193,7 +227,7 @@ int Parser::parse() {
 					raiseError("unexpected primary value");
 					return 1;
 				}
-				emitOp(OP_PSHC, tok.d);
+				emitOp(OP_CONST, tok.d);
 				break;
 
 			case TOK_F_PI:
@@ -227,8 +261,25 @@ int Parser::parse() {
 			case TOK_F_SQRT:
 			case TOK_F_SIN:
 			case TOK_F_COS:
+			case TOK_F_TAN:
+			case TOK_F_ASIN:
+			case TOK_F_ACOS:
+			case TOK_F_ATAN:
+			case TOK_F_SINH:
+			case TOK_F_COSH:
+			case TOK_F_TANH:
+			case TOK_F_ASINH:
+			case TOK_F_ACOSH:
+			case TOK_F_ATANH:
 			case TOK_F_EXP:
 			case TOK_F_LOG:
+			case TOK_F_ERF:
+			case TOK_F_ERFC:
+			case TOK_F_ABS:
+			case TOK_F_FLOOR:
+			case TOK_F_CEIL:
+			case TOK_F_ROUND:
+			case TOK_F_TRUNC:
 			case TOK_F_POW:
 			case TOK_UN_NEG:
 				if (canBeValue(lastTokenId)) {

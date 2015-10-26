@@ -9,11 +9,11 @@ static void print(const Ast &ast, int indent) {
 		printf("%*c", indent * 2, ' ');
 	printf("%s", getOperatorName(ast.op));
 	switch (ast.op) {
-	case OP_PSHA:
+	case OP_ARG:
 	case OP_POWI:
 		printf(" %d\n", ast.i);
 		break;
-	case OP_PSHC:
+	case OP_CONST:
 		printf(" %g\n", ast.d);
 		break;
 	default:
