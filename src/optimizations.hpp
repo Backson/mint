@@ -13,8 +13,11 @@ public:
 	~Optimizer() = default;
 	
 	void optimizePowersToIntegerExponents(Ast *);
-	void optimizeConstantFolding(Ast *);
+	void collapseConstants(Ast *);
+	void collapseSigns(Ast *);
+
 	void optimizeDefaults(Ast *);
+	void optimizeAll(Ast *);
 private:
 
 };

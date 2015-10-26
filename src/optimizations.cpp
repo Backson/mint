@@ -40,7 +40,7 @@ void Optimizer::optimizePowersToIntegerExponents(Ast *ast) {
 	visitor_lambda(ast);
 }
 
-void Optimizer::optimizeConstantFolding(Ast *ast) {
+void Optimizer::collapseConstants(Ast *ast) {
 	std::function<void(Ast *ast)> visitor_lambda =
 	[&visitor_lambda](Ast *ast) {
 		for (Ast &child : ast->children) {
@@ -96,7 +96,34 @@ void Optimizer::optimizeConstantFolding(Ast *ast) {
 	visitor_lambda(ast);
 }
 
+void Optimizer::collapseSigns(Ast *ast) {
+	std::function<void(Ast *ast)> visitor_lambda =
+	[&visitor_lambda](Ast *ast) {
+		if (ast->op == OP_NEG) {
+			Ast *child = &ast->children[0];
+			if (child->op == OP_NEG) {
+				Ast *childchild = &child->children[0];
+				// undefined execution order forces us to use a temp
+				// otherwise childchild might get destroyed before it gets moved
+				Ast tmp = std::move(*childchild);
+				*ast = std::move(tmp);
+				visitor_lambda(ast);
+			}
+		} else {
+			for (Ast &child : ast->children) {
+				visitor_lambda(&child);
+			}
+		}
+	};
+	visitor_lambda(ast);
+}
+
 void Optimizer::optimizeDefaults(Ast *ast) {
+	optimizeAll(ast);
+}
+
+void Optimizer::optimizeAll(Ast *ast) {
 	optimizePowersToIntegerExponents(ast);
-	optimizeConstantFolding(ast);
+	collapseConstants(ast);
+	collapseSigns(ast);
 }
