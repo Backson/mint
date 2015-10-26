@@ -154,6 +154,10 @@ double native_ex_functions(const double * d) {
 	return tan(d[0]) + trunc(d[1]) + cos(abs(d[2])) - floor(d[0]) + atan(5) - acosh(pi);
 }
 
+double native_ex_plusses(const double * d) {
+	return d[0] + d[0];
+}
+
 int main(int argc, char *argv[]) {
 	static const int N = 1000000;
 	static const int MAXNARGS = 3;
@@ -189,6 +193,8 @@ int main(int argc, char *argv[]) {
 	test(N, 1, &data[0], "x^2", &native_square);
 	test(N, 3, &data[0], "exp(-0.5*((x-z)/y)^2)/(sqrt(2*pi)*y)", &native_gaus);
 	test(N, 3, &data[0], "tan(x) + trunc(y) + cos(abs(z)) - floor(x) + arctan(5) - arcosh(pi)", &native_ex_functions);
+	test(N, 1, &data[0], "+ + + + x + + + x", &native_ex_plusses);
+
 
 	for (int i = 0; i < MAXNARGS; ++i) {
 		delete[] data[i];
