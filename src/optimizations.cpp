@@ -60,14 +60,6 @@ void Optimizer::optimizeConstantFolding(Ast *ast) {
 		double d;
 		bool is_operator = true;
 		switch (ast->op) {
-		case OP_PI:
-			ast->d = pi_impl<double>();
-			is_operator = false;
-			break;
-		case OP_E:
-			ast->d = e_impl<double>();
-			is_operator = false;
-			break;
 		case OP_POWI:
 			d = pow(ast->children[0].d, ast->i);
 			break;
@@ -78,7 +70,8 @@ void Optimizer::optimizeConstantFolding(Ast *ast) {
 		default:
 			switch (getOperandNumber(ast->op)) {
 				case 0: {
-					d = op0_impl<double>(ast->op);
+					ast->d = op0_impl<double>(ast->op);
+					is_operator = false;
 					break;
 				}
 				case 1: {
