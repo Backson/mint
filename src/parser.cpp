@@ -210,6 +210,7 @@ int Parser::parse() {
 			|| canBeInfix(lastTokenId);
 		bool expectExpr = lastTokenId == TOK_NONE
 			|| lastTokenId == TOK_LPAREN
+			|| canBePrefix(lastTokenId)
 			|| canBeInfix(lastTokenId);
 		switch (tok.id) {
 

@@ -135,28 +135,28 @@ double native_ex12(const double * d) {
 	return d[0] + (cos(d[1] - sin(2 / d[0] * pi)) - sin(d[0] - cos(2 * d[1] / pi))) - d[1];
 }
 
-double native_unity(const double * d) {
+double native_ex13(const double * d) {
 	return d[0];
 }
 
-double native_square(const double * d) {
+double native_ex14(const double * d) {
 	return d[0] * d[0];
 }
 
-double native_gaus(const double * d) {
+double native_ex15(const double * d) {
 	double x = (d[0] - d[2]) / d[1];
 	return exp(-0.5 * x * x) / (sqrt(2 * pi) * d[1]);
 }
 
-double native_ex_functions(const double * d) {
+double native_ex16(const double * d) {
 	return tan(d[0]) + trunc(d[1]) + cos(abs(d[2])) - floor(d[0]) + atan(5) - acosh(pi);
 }
 
-double native_ex_plusses(const double * d) {
+double native_ex17(const double * d) {
 	return d[0] + d[0];
 }
 
-double native_ex_long(const double *d) {
+double native_ex18(const double *d) {
 	double x = d[0];
 	double y = d[1];
 	double z = d[2];
@@ -164,10 +164,16 @@ double native_ex_long(const double *d) {
 	return ((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))));
 }
 
-double native_ex_long2(const double *d) {
+double native_ex19(const double *d) {
 	double a = d[0];
 	double b = d[1];
 	return tan((((cos(tan(((tan((((1.92 + (pi / (pi - sin((cos(((((tan((((sin((((sin((0.40 + cos((tan((tan((((sin(((((((e + 2.58) + 3.88) + b) - b) + a) + e))*0.10) + a) + b))*e))*a)))) + a) + pi) / 0.78)) + a) / pi)*3.29))*a) / b) / 2.71)*3.53)) + 1.87))))) / 2.72) / e)) / a) + 0.49))) + pi) + a) - b));
+}
+
+double native_ex20(const double *d) {
+	double a = d[0];
+	double b = d[1];
+	return a + b;
 }
 
 int main(int argc, char *argv[]) {
@@ -201,13 +207,14 @@ int main(int argc, char *argv[]) {
 	test(N, 2, &data[0], "sqrt(111.111 - sin(2 * x) + cos(pi / y) / 333.333)", &native_ex10);
 	test(N, 2, &data[0], "(x^2 / sin(2 * pi / y)) -x / 2", &native_ex11);
 	test(N, 2, &data[0], "x + (cos(y - sin(2 / x * pi)) - sin(x - cos(2 * y / pi))) - y", &native_ex12);
-	test(N, 1, &data[0], "x", &native_unity);
-	test(N, 1, &data[0], "x^2", &native_square);
-	test(N, 3, &data[0], "exp(-0.5*((x-z)/y)^2)/(sqrt(2*pi)*y)", &native_gaus);
-	test(N, 3, &data[0], "tan(x) + trunc(y) + cos(abs(z)) - floor(x) + arctan(5) - arcosh(pi)", &native_ex_functions);
-	test(N, 1, &data[0], "+ + + + x + + + x", &native_ex_plusses);
-	test(N, 4, &data[0], "((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))))", &native_ex_long);
-	test(N, 2, &data[0], "tan((((cos(tan(((tan((((1.92+(pi/(pi-sin((cos(((((tan((((sin((((sin((0.40+cos((tan((tan((((sin(((((((e+2.58)+3.88)+b)-b)+a)+e))*0.10)+a)+b))*e))*a))))+a)+pi)/0.78))+a)/pi)*3.29))*a)/b)/2.71)*3.53))+1.87)))))/2.72)/e))/a)+0.49)))+pi)+a)-b))", &native_ex_long2);
+	test(N, 1, &data[0], "x", &native_ex13);
+	test(N, 1, &data[0], "x^2", &native_ex14);
+	test(N, 3, &data[0], "exp(-0.5*((x-z)/y)^2)/(sqrt(2*pi)*y)", &native_ex15);
+	test(N, 3, &data[0], "tan(x) + trunc(y) + cos(abs(z)) - floor(x) + arctan(5) - arcosh(pi)", &native_ex16);
+	test(N, 1, &data[0], "+ + + + x + + + x", &native_ex17);
+	test(N, 4, &data[0], "((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))))", &native_ex18);
+	test(N, 2, &data[0], "tan((((cos(tan(((tan((((1.92+(pi/(pi-sin((cos(((((tan((((sin((((sin((0.40+cos((tan((tan((((sin(((((((e+2.58)+3.88)+b)-b)+a)+e))*0.10)+a)+b))*e))*a))))+a)+pi)/0.78))+a)/pi)*3.29))*a)/b)/2.71)*3.53))+1.87)))))/2.72)/e))/a)+0.49)))+pi)+a)-b))", &native_ex19);
+	test(N, 2, &data[0], "- (- - + - a) + (((((((a)+b))-b)))) + b - ((a))", &native_ex20);
 
 	for (int i = 0; i < MAXNARGS; ++i) {
 		delete[] data[i];
