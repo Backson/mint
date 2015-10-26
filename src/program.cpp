@@ -20,11 +20,10 @@
 Program::Program(const char * src) {
 	Parser parser(src);
 	if (parser.parse()) {
-		printf("Error: %s\n", parser.getError());
-		printf("%s\n", src);
-		printf("%*s\n\n", parser.getLastToken().pos + 1, "^");
-		getchar();
-		throw std::runtime_error("parsing error");
+		//printf("Error: %s\n", parser.getError());
+		//printf("%s\n", src);
+		//printf("%*s\n\n", parser.getLastToken().pos + 1, "^");
+		throw std::invalid_argument("parsing error");
 	}
 
 	Ast ast = parser.getAst();
