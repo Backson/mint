@@ -43,7 +43,7 @@ Program::Program(const char * src) {
 			program_p->push_back(ast.op);
 		switch (ast.op) {
 		case OP_CONST:
-			program_p->push_back(constants_p->size());
+			program_p->push_back((unsigned char)constants_p->size());
 			constants_p->push_back(ast.d);
 			break;
 		case OP_ARG:

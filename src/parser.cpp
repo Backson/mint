@@ -29,7 +29,7 @@ Token Scanner::getNextToken() {
 			while (isblank(*next))
 				++next;
 			tok.start = next;
-			tok.pos = next - str;
+			tok.pos = (int)(next - str);
 			// select next state
 			if (*next == '\0') {
 				tok.id = TOK_EOF;
@@ -167,7 +167,7 @@ Token Scanner::getNextToken() {
 			continue;
 		}
 	}
-	tok.len = next - tok.start;
+	tok.len = (int)(next - tok.start);
 	return tok;
 }
 

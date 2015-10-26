@@ -56,9 +56,6 @@ void test(int N, int NARGS, double ** data, const char * program_str, func_t nat
 	double mint_error_sum = 0.0;
 	double mint_error_max = 0.0;
 	for (int i = 0; i < N; ++i) {
-		params[0] = data[0][i];
-		params[1] = data[1][i];
-		params[2] = data[2][i];
 		double native_res = native_results[i];
 		double mint_res = mint_results[i];
 		if (native_res == mint_res) {
