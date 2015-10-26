@@ -5,6 +5,7 @@
 #include "optimizations.hpp"
 
 #include "ast.hpp"
+#include "impl.hpp"
 
 #include <functional>
 
@@ -59,111 +60,40 @@ void Optimizer::optimizeConstantFolding(Ast *ast) {
 		double d;
 		bool is_operator = true;
 		switch (ast->op) {
-		default:
-			is_operator = false;
-			break;
 		case OP_PI:
-			ast->d = 3.14159265358979323846264338327950288419716939937510;
+			ast->d = pi_impl<double>();
 			is_operator = false;
 			break;
 		case OP_E:
-			ast->d = 2.71828182845904523536028747135266249775724709369995;
+			ast->d = e_impl<double>();
 			is_operator = false;
-			break;
-		case OP_NEG:
-			d = - ast->children[0].d;
-			break;
-		case OP_INV:
-			d = 1 / ast->children[0].d;
-			break;
-		case OP_SQ:
-			d = ast->children[0].d * ast->children[0].d;
-			break;
-		case OP_SQRT:
-			d = sqrt(ast->children[0].d);
-			break;
-		case OP_SIN:
-			d = sin(ast->children[0].d);
-			break;
-		case OP_COS:
-			d = cos(ast->children[0].d);
-			break;
-		case OP_TAN:
-			d = tan(ast->children[0].d);
-			break;
-		case OP_ASIN:
-			d = asin(ast->children[0].d);
-			break;
-		case OP_ACOS:
-			d = acos(ast->children[0].d);
-			break;
-		case OP_ATAN:
-			d = atan(ast->children[0].d);
-			break;
-		case OP_SINH:
-			d = sinh(ast->children[0].d);
-			break;
-		case OP_COSH:
-			d = cosh(ast->children[0].d);
-			break;
-		case OP_TANH:
-			d = tanh(ast->children[0].d);
-			break;
-		case OP_ASINH:
-			d = asinh(ast->children[0].d);
-			break;
-		case OP_ACOSH:
-			d = acosh(ast->children[0].d);
-			break;
-		case OP_ATANH:
-			d = atanh(ast->children[0].d);
-			break;
-		case OP_LOG:
-			d = log(ast->children[0].d);
-			break;
-		case OP_EXP:
-			d = exp(ast->children[0].d);
-			break;
-		case OP_ERF:
-			d = erf(ast->children[0].d);
-			break;
-		case OP_ERFC:
-			d = erfc(ast->children[0].d);
-			break;
-		case OP_ABS:
-			d = abs(ast->children[0].d);
-			break;
-		case OP_FLOOR:
-			d = floor(ast->children[0].d);
-			break;
-		case OP_CEIL:
-			d = ceil(ast->children[0].d);
-			break;
-		case OP_ROUND:
-			d = round(ast->children[0].d);
-			break;
-		case OP_TRUNC:
-			d = trunc(ast->children[0].d);
-			break;
-		case OP_ADD:
-			d = ast->children[0].d + ast->children[1].d;
-			break;
-		case OP_SUB:
-			d = ast->children[0].d - ast->children[1].d;
-			break;
-		case OP_MUL:
-			d = ast->children[0].d * ast->children[1].d;
-			break;
-		case OP_DIV:
-			d = ast->children[0].d / ast->children[1].d;
-			break;
-		case OP_POW:
-			d = pow(ast->children[0].d, ast->children[1].d);
 			break;
 		case OP_POWI:
 			d = pow(ast->children[0].d, ast->i);
 			break;
-		}
+		case OP_ARG:
+		case OP_CONST:
+			is_operator = false;
+			break;
+		default:
+			switch (getOperandNumber(ast->op)) {
+				case 0: {
+					d = op0_impl<double>(ast->op);
+					break;
+				}
+				case 1: {
+					double x = ast->children[0].d;
+					d = op1_impl(ast->op, x);
+					break;
+				}
+				case 2: {
+					double x = ast->children[0].d;
+					double y = ast->children[1].d;
+					d = op2_impl<double>(ast->op, x, y);
+					break;
+				}
+			}
+		} // switch (ast->op)
 		if (is_operator) {
 			ast->children.clear();
 			ast->op = OP_CONST;

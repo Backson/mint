@@ -5,6 +5,8 @@
 #ifndef TOKENS_HPP_
 #define TOKENS_HPP_
 
+#include "ops.hpp"
+
 // DON'T CHANGE THE ORDER OF THESE
 enum TokenId {
 	TOK_EOF,
@@ -77,7 +79,7 @@ bool canBeOperation(int);
 int getPrecedence(int);
 bool isRightAssociative(int);
 
-unsigned char getOperator(int);
+Op getOperator(int);
 
 struct Token {
 	TokenId id;

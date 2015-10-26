@@ -10,7 +10,7 @@
 #include <vector>
 
 struct Ast {
-	int op;
+	Op op;
 	std::vector<Ast> children;
 	union {
 		double d;

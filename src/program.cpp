@@ -5,6 +5,7 @@
 #include "program.hpp"
 
 #include "ops.hpp"
+#include "impl.hpp"
 #include "tokens.hpp"
 #include "parser.hpp"
 
@@ -88,124 +89,41 @@ double Program::run(const double * arguments) {
 	double * sp = stack - 1; // stack pointer
 
 	while (*ip != OP_HLT) {
-		switch (*ip++) {
+		Op op = Op(*ip++);
+		switch (op) {
 		case OP_NOOP:
 			break;
 		case OP_CONST:
 			*++sp = constants[*ip++];
-			continue;
+			break;
 		case OP_ARG:
 			*++sp = arguments[*ip++];
-			continue;
-		case OP_PI:
-			*++sp = 3.14159265358979323846264338327950288419716939937510;
-			continue;
-		case OP_E:
-			*++sp = 2.71828182845904523536028747135266249775724709369995;
-			continue;
-		case OP_NEG:
-			sp[0] = - sp[0];
-			continue;
-		case OP_INV:
-			sp[0] = 1 / sp[0];
-			continue;
-		case OP_SQ:
-			sp[0] = sp[0] * sp[0];
-			continue;
-		case OP_CU:
-			sp[0] = sp[0] * sp[0] * sp[0];
-			continue;
-		case OP_SQRT:
-			sp[0] = sqrt(sp[0]);
-			continue;
-		case OP_SIN:
-			sp[0] = sin(sp[0]);
-			continue;
-		case OP_COS:
-			sp[0] = cos(sp[0]);
-			continue;
-		case OP_TAN:
-			sp[0] = tan(sp[0]);
-			continue;
-		case OP_ASIN:
-			sp[0] = asin(sp[0]);
-			continue;
-		case OP_ACOS:
-			sp[0] = acos(sp[0]);
-			continue;
-		case OP_ATAN:
-			sp[0] = atan(sp[0]);
-			continue;
-		case OP_SINH:
-			sp[0] = sinh(sp[0]);
-			continue;
-		case OP_COSH:
-			sp[0] = cosh(sp[0]);
-			continue;
-		case OP_TANH:
-			sp[0] = tanh(sp[0]);
-			continue;
-		case OP_ASINH:
-			sp[0] = asinh(sp[0]);
-			continue;
-		case OP_ACOSH:
-			sp[0] = acosh(sp[0]);
-			continue;
-		case OP_ATANH:
-			sp[0] = atanh(sp[0]);
-			continue;
-		case OP_LOG:
-			sp[0] = log(sp[0]);
-			continue;
-		case OP_EXP:
-			sp[0] = exp(sp[0]);
-			continue;
-		case OP_ERF:
-			sp[0] = erf(sp[0]);
-			continue;
-		case OP_ERFC:
-			sp[0] = erfc(sp[0]);
-			continue;
-		case OP_ABS:
-			sp[0] = abs(sp[0]);
-			continue;
-		case OP_FLOOR:
-			sp[0] = floor(sp[0]);
-			continue;
-		case OP_CEIL:
-			sp[0] = ceil(sp[0]);
-			continue;
-		case OP_ROUND:
-			sp[0] = round(sp[0]);
-			continue;
-		case OP_TRUNC:
-			sp[0] = trunc(sp[0]);
-			continue;
-		case OP_ADD:
-			sp[-1] += sp[0];
-			--sp;
-			continue;
-		case OP_SUB:
-			sp[-1] -= sp[0];
-			--sp;
-			continue;
-		case OP_MUL:
-			sp[-1] *= sp[0];
-			--sp;
-			continue;
-		case OP_DIV:
-			sp[-1] /= sp[0];
-			--sp;
-			continue;
-		case OP_POW:
-			sp[-1] = pow(sp[-1], sp[0]);
-			--sp;
-			continue;
+			break;
 		case OP_POWI:
 			sp[0] = pow(sp[0], SCHAR_MIN + int(*ip++));
-			continue;
-		}
-	}
+			break;
+		default: {
+			int num_operands = getOperandNumber(op);
+			switch (num_operands) {
+			case 0: {
+				*++sp = op0_impl<double>(op);
+				break;
+			}
+			case 1: {
+				double x = *sp;
+				*sp = op1_impl(op, x);
+				break;
+			}
+			case 2: {
+				double y = *sp--;
+				double x = *sp;
+				*sp = op2_impl<double>(op, x, y);
+				break;
+			}
+			}
+		} // default case
+		} // switch (*ip++)
+	} // while (*ip != OP_HLT)
 
 	return stack[0];
 }

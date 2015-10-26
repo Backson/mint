@@ -22,6 +22,34 @@ void test(int N, int NARGS, double ** data, const char * program_str, func_t nat
 	p.print();
 
 	double params[3];
+	
+	double *native_results = new double[N];
+	double *mint_results = new double[N];
+
+	// benchmarks
+	high_resolution_clock::time_point t1, t2;
+
+	// native
+	t1 = high_resolution_clock::now();
+	for (int i = 0; i < N; ++i) {
+		params[0] = data[0][i];
+		params[1] = data[1][i];
+		params[2] = data[2][i];
+		native_results[i] = native_f(params);
+	}
+	t2 = high_resolution_clock::now();
+	double time_reference = duration_cast<duration<double>>(t2 - t1).count();
+	
+	// mint
+	t1 = high_resolution_clock::now();
+	for (int i = 0; i < N; ++i) {
+		params[0] = data[0][i];
+		params[1] = data[1][i];
+		params[2] = data[2][i];
+		mint_results[i] = p.run(params);
+	}
+	t2 = high_resolution_clock::now();
+	double time_program = duration_cast<duration<double>>(t2 - t1).count();
 
 	// tests
 	int mint_counter = 0;
@@ -31,8 +59,8 @@ void test(int N, int NARGS, double ** data, const char * program_str, func_t nat
 		params[0] = data[0][i];
 		params[1] = data[1][i];
 		params[2] = data[2][i];
-		double native_res = native_f(params);
-		double mint_res = p.run(params);
+		double native_res = native_results[i];
+		double mint_res = mint_results[i];
 		if (native_res == mint_res) {
 			++mint_counter;
 		} else {
@@ -43,44 +71,8 @@ void test(int N, int NARGS, double ** data, const char * program_str, func_t nat
 		}
 	}
 
-	// benchmarks
-	high_resolution_clock::time_point t1, t2;
-
-	// overhead
-	double sum1 = 0.0;
-	t1 = high_resolution_clock::now();
-	for (int i = 0; i < N; ++i) {
-		params[0] = data[0][i];
-		params[1] = data[1][i];
-		params[2] = data[2][i];
-		sum1 += params[0];
-	}
-	t2 = high_resolution_clock::now();
-	double time_offset = duration_cast<duration<double>>(t2 - t1).count();
-
-	// native
-	double sum2 = 0.0;
-	t1 = high_resolution_clock::now();
-	for (int i = 0; i < N; ++i) {
-		params[0] = data[0][i];
-		params[1] = data[1][i];
-		params[2] = data[2][i];
-		sum2 += native_f(params);
-	}
-	t2 = high_resolution_clock::now();
-	double time_reference = duration_cast<duration<double>>(t2 - t1).count() - time_offset;
-	
-	// mint
-	double sum3 = 0.0;
-	t1 = high_resolution_clock::now();
-	for (int i = 0; i < N; ++i) {
-		params[0] = data[0][i];
-		params[1] = data[1][i];
-		params[2] = data[2][i];
-		sum3 += p.run(params);
-	}
-	t2 = high_resolution_clock::now();
-	double time_program = duration_cast<duration<double>>(t2 - t1).count() - time_offset;
+	delete[] native_results;
+	delete[] mint_results;
 
 	printf("%12s %12s %12s\n", "",
 		"native", "mint");
@@ -163,7 +155,7 @@ double native_ex_functions(const double * d) {
 }
 
 int main(int argc, char *argv[]) {
-	static const int N = 100000;
+	static const int N = 1000000;
 	static const int MAXNARGS = 3;
 
 	// prepare some input data

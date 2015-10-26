@@ -37,8 +37,8 @@ public:
 private:
 	void raiseError(const char * reason);
 	
-	void emitOp(int op, int i = 0);
-	void emitOp(int op, double d);
+	void emitOp(Op op, int i = 0);
+	void emitOp(Op op, double d);
 	void emitOp(Ast &ast);
 
 	Scanner scanner;

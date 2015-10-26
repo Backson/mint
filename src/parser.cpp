@@ -365,14 +365,14 @@ int Parser::parse() {
 	return 0;
 }
 
-void Parser::emitOp(int op, int i) {
+void Parser::emitOp(Op op, int i) {
 	Ast ast;
 	ast.op = op;
 	ast.i = i;
 	emitOp(ast);
 }
 
-void Parser::emitOp(int op, double d) {
+void Parser::emitOp(Op op, double d) {
 	Ast ast;
 	ast.op = op;
 	ast.d = d;

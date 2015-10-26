@@ -95,8 +95,8 @@ bool isRightAssociative(int id) {
 	}
 }
 
-unsigned char getOperator(int id) {
-	static const unsigned char data[] {
+Op getOperator(int id) {
+	static const Op data[] {
 		OP_HLT,   // TOK_EOF
 		OP_ARG,   // TOK_ARG
 		OP_CONST, // TOK_LIT
