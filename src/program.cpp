@@ -60,10 +60,10 @@ Program::Program(const char * src) {
 			break;
 		}
 		case OP_ARG:
-			program_p->push_back(unsigned char(ast.i));
+			program_p->push_back((unsigned char)(ast.i));
 			break;
 		case OP_POWI:
-			program_p->push_back(unsigned char(ast.i - SCHAR_MIN));
+			program_p->push_back((unsigned char)(ast.i - SCHAR_MIN));
 			break;
 		default:
 			break;

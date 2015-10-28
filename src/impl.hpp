@@ -5,7 +5,7 @@
 #include "ops.hpp"
 
 #include <cmath>
-#include <exception>
+#include <stdexcept>
 
 template <typename T>
 static inline T pi_impl() {

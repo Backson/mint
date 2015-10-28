@@ -7,9 +7,13 @@
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
+#include <climits>
+#include <cstdio>
 #include <stack>
 
 #include "ast.hpp"
+#include "ops.hpp"
 
 enum State {
 	TERM,
@@ -26,7 +30,7 @@ Token Scanner::getNextToken() {
 		switch (state) {
 		case START:
 			// eat whitespace
-			while (isblank(*next))
+			while (std::isspace(*next))
 				++next;
 			tok.start = next;
 			tok.pos = (int)(next - str);
@@ -245,7 +249,7 @@ int Parser::parse() {
 					raiseError("argument number out of range");
 					return 1;
 				}
-				emitOp(OP_ARG, unsigned char(tok.i));
+				emitOp(OP_ARG, (unsigned char)(tok.i));
 				break;
 
 			case TOK_LIT:
@@ -341,7 +345,7 @@ int Parser::parse() {
 					stack.pop();
 				}
 				break;
-			
+
 			case TOK_OP_ADD:
 			case TOK_OP_SUB:
 			case TOK_OP_MUL:

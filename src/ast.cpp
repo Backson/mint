@@ -4,6 +4,8 @@
 
 #include "ast.hpp"
 
+#include <cstdio>
+
 static void print(const Ast &ast, int indent) {
 	if (indent > 0)
 		printf("%*c", indent * 2, ' ');

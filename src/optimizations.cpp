@@ -8,6 +8,7 @@
 #include "impl.hpp"
 
 #include <functional>
+#include <climits>
 
 void Optimizer::optimizePowersToIntegerExponents(Ast *ast) {
 	std::function<void(Ast *ast)> visitor_lambda =
