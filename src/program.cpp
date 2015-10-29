@@ -74,7 +74,7 @@ Program::Program(const char * src) {
 }
 
 void Program::print() {
-	unsigned char const * ip = program.data(); // instruction pointer
+	unsigned char const *ip = program.data(); // instruction pointer
 
 	do {
 		int op = *ip++;
@@ -97,9 +97,9 @@ void Program::print() {
 	} while (*ip != OP_HLT);
 }
 
-double Program::run(const double * arguments) {
-	unsigned char const * ip = program.data(); // instruction pointer
-	double * sp = stack - 1; // stack pointer
+double Program::run(const double *arguments) {
+	unsigned char const *ip = program.data(); // instruction pointer
+	double *sp = stack - 1; // stack pointer
 
 	while (*ip != OP_HLT) {
 		Op op = Op(*ip++);
@@ -146,4 +146,58 @@ double Program::run(const double * arguments) {
 	} // while (*ip != OP_HLT)
 
 	return stack[0];
+}
+
+
+void Program::run(double **arguments, double *result, size_t n) {
+	for (size_t i = 0; i < n; ++i) {
+		unsigned char const *ip = program.data(); // instruction pointer
+		double *sp = stack - 1; // stack pointer
+
+		while (*ip != OP_HLT) {
+			Op op = Op(*ip++);
+			switch (op) {
+			case OP_NOOP:
+				break;
+			case OP_CONST:
+				*++sp = constants[*ip++];
+				break;
+			case OP_ARG:
+				*++sp = arguments[*ip++][i];
+				break;
+			case OP_POWI:
+				sp[0] = pow(sp[0], SCHAR_MIN + int(*ip++));
+				break;
+			default: {
+				int num_operands = getOperandNumber(op);
+				switch (num_operands) {
+				case 0: {
+					*++sp = op0_impl<double>(op);
+					break;
+				}
+				case 1: {
+					double x = *sp;
+					*sp = op1_impl(op, x);
+					break;
+				}
+				case 2: {
+					double y = *sp--;
+					double x = *sp;
+					*sp = op2_impl<double>(op, x, y);
+					break;
+				}
+				case 3: {
+					double z = *sp--;
+					double y = *sp--;
+					double x = *sp;
+					*sp = op3_impl<double>(op, x, y, z);
+					break;
+				}
+				}
+			} // default case
+			} // switch (*ip++)
+		} // while (*ip != OP_HLT)
+
+		result[i] = stack[0];
+	}
 }
