@@ -23,6 +23,8 @@ public:
 	/// rebalances the AST, so calculations which require lots of space are done first.  This
 	/// can sometimes reduce the total necessary amount of space on the stack.
 	void compressStack(Ast *);
+	/// contractions like fma and such
+	void contract(Ast *);
 
 	void optimizeDefaults(Ast *);
 	void optimizeAll(Ast *);

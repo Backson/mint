@@ -60,6 +60,12 @@ enum Op {
 	OP_DIV,   // divide
 	OP_POW,   // first value to the second value's power
 
+	// contractions
+	OP_FUSED_A_B_C_MUL_ADD,
+	OP_FUSED_A_B_C_ADD_MUL,
+	OP_FUSED_A_B_MUL_C_ADD,
+	OP_FUSED_A_B_ADD_C_MUL,
+
 	// technical nodes used by the AST
 	OP_INVALID = 0x100, // invalid opcode
 

@@ -8,7 +8,8 @@ int getOperandNumber(int op) {
 	static const int data[] = {
 		0, 0, 0, 0, 0, 0,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		2, 2, 2, 2, 2
+		2, 2, 2, 2, 2,
+		3, 3, 3, 3,
 	};
 	return data[op];
 }
@@ -17,7 +18,8 @@ bool isOperatorConstant(int op) {
 	static const int data[] = {
 		0, 0, 1, 0, 1, 1,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0
+		0, 0, 0, 0, 0,
+		0, 0, 0, 0,
 	};
 	return data[op] != 0;
 }
@@ -62,6 +64,10 @@ const char *getOperatorName(int op) {
 		"MUL",
 		"DIV",
 		"POW",
+		"FMA",
+		"FAM",
+		"FMA2",
+		"FAM2",
 	};
 	return data[op];
 }

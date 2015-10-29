@@ -133,6 +133,13 @@ double Program::run(const double * arguments) {
 				*sp = op2_impl<double>(op, x, y);
 				break;
 			}
+			case 3: {
+				double z = *sp--;
+				double y = *sp--;
+				double x = *sp;
+				*sp = op3_impl<double>(op, x, y, z);
+				break;
+			}
 			}
 		} // default case
 		} // switch (*ip++)

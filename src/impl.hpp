@@ -50,6 +50,11 @@ template <typename T> static inline T mul_impl (T x, T y) { return x * y; }
 template <typename T> static inline T div_impl (T x, T y) { return x / y; }
 template <typename T> static inline T pow_impl (T x, T y) { return std::pow(x, y); }
 
+template <typename T> static inline T fma1_impl (T x, T y, T z) { return x + y * z; }
+template <typename T> static inline T fam1_impl (T x, T y, T z) { return x * (y + z); }
+template <typename T> static inline T fma2_impl (T x, T y, T z) { return x * y + z; }
+template <typename T> static inline T fam2_impl (T x, T y, T z) { return (x + y) * z; }
+
 template <typename T>
 static inline T op0_impl(Op op) {
 	switch (op) {
@@ -100,6 +105,17 @@ static inline T op2_impl(Op op, T x, T y) {
 	case OP_MUL: return mul_impl(x, y);
 	case OP_DIV: return div_impl(x, y);
 	case OP_POW: return pow_impl(x, y);
+	default:     throw std::invalid_argument("Wrong number of arguments for operator");
+	}
+}
+
+template <typename T>
+static inline T op3_impl(Op op, T x, T y, T z) {
+	switch (op) {
+	case OP_FUSED_A_B_C_MUL_ADD: return fma1_impl(x, y, z);
+	case OP_FUSED_A_B_C_ADD_MUL: return fam1_impl(x, y, z);
+	case OP_FUSED_A_B_MUL_C_ADD: return fma2_impl(x, y, z);
+	case OP_FUSED_A_B_ADD_C_MUL: return fam2_impl(x, y, z);
 	default:     throw std::invalid_argument("Wrong number of arguments for operator");
 	}
 }

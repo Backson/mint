@@ -78,6 +78,13 @@ void Optimizer::collapseConstants(Ast *ast) {
 					d = op2_impl<double>(ast->op, x, y);
 					break;
 				}
+				case 3: {
+					double x = ast->children[0].d;
+					double y = ast->children[1].d;
+					double z = ast->children[2].d;
+					d = op3_impl<double>(ast->op, x, y, z);
+					break;
+				}
 			}
 		} // switch (ast->op)
 		if (is_operator) {
@@ -122,6 +129,42 @@ void Optimizer::compressStack(Ast *ast) {
 	}, ast);
 }
 
+void Optimizer::contract(Ast *ast) {
+	matchAll([](Ast *ast) {
+		Ast a, b, c;
+		bool can_contract = true;
+		if (ast->op == OP_ADD && ast->children[1].op == OP_MUL) {
+			ast->op = OP_FUSED_A_B_C_MUL_ADD;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else if (ast->op == OP_MUL && ast->children[1].op == OP_ADD) {
+			ast->op = OP_FUSED_A_B_C_ADD_MUL;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else if (ast->op == OP_ADD && ast->children[0].op == OP_MUL) {
+			ast->op = OP_FUSED_A_B_MUL_C_ADD;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else if (ast->op == OP_MUL && ast->children[0].op == OP_ADD) {
+			ast->op = OP_FUSED_A_B_ADD_C_MUL;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else {
+			can_contract = false;
+		}
+		if (can_contract) {
+			ast->children.clear();
+			ast->children.push_back(std::move(a));
+			ast->children.push_back(std::move(b));
+			ast->children.push_back(std::move(c));
+		}
+	}, ast);
+}
+
 void Optimizer::optimizeDefaults(Ast *ast) {
 	optimizeAll(ast);
 }
@@ -131,4 +174,5 @@ void Optimizer::optimizeAll(Ast *ast) {
 	collapseConstants(ast);
 	collapseSigns(ast);
 	compressStack(ast);
+	contract(ast);
 }
