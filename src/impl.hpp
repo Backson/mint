@@ -50,10 +50,43 @@ template <typename T> static inline T mul_impl (T x, T y) { return x * y; }
 template <typename T> static inline T div_impl (T x, T y) { return x / y; }
 template <typename T> static inline T pow_impl (T x, T y) { return std::pow(x, y); }
 
-template <typename T> static inline T fma1_impl (T x, T y, T z) { return x + y * z; }
-template <typename T> static inline T fam1_impl (T x, T y, T z) { return x * (y + z); }
-template <typename T> static inline T fma2_impl (T x, T y, T z) { return x * y + z; }
-template <typename T> static inline T fam2_impl (T x, T y, T z) { return (x + y) * z; }
+#define DECLARE_OP_3_CONTRACTION(name,expr) \
+	template <typename T> static inline T name ## _impl (T x, T y, T z) { return expr; }
+
+DECLARE_OP_3_CONTRACTION(fmm_l,(x*y)*z)
+DECLARE_OP_3_CONTRACTION(fma_l,(x*y)+z)
+DECLARE_OP_3_CONTRACTION(fms_l,(x*y)-z)
+DECLARE_OP_3_CONTRACTION(fmd_l,(x*y)/z)
+DECLARE_OP_3_CONTRACTION(fam_l,(x+y)*z)
+DECLARE_OP_3_CONTRACTION(faa_l,(x+y)+z)
+DECLARE_OP_3_CONTRACTION(fas_l,(x+y)-z)
+DECLARE_OP_3_CONTRACTION(fad_l,(x+y)/z)
+DECLARE_OP_3_CONTRACTION(fsm_l,(x-y)*z)
+DECLARE_OP_3_CONTRACTION(fsa_l,(x-y)+z)
+DECLARE_OP_3_CONTRACTION(fss_l,(x-y)-z)
+DECLARE_OP_3_CONTRACTION(fsd_l,(x-y)/z)
+DECLARE_OP_3_CONTRACTION(fdm_l,(x/y)*z)
+DECLARE_OP_3_CONTRACTION(fda_l,(x/y)+z)
+DECLARE_OP_3_CONTRACTION(fds_l,(x/y)-z)
+DECLARE_OP_3_CONTRACTION(fdd_l,(x/y)/z)
+DECLARE_OP_3_CONTRACTION(fmm_r,x*(y*z))
+DECLARE_OP_3_CONTRACTION(fma_r,x*(y+z))
+DECLARE_OP_3_CONTRACTION(fms_r,x*(y-z))
+DECLARE_OP_3_CONTRACTION(fmd_r,x*(y/z))
+DECLARE_OP_3_CONTRACTION(fam_r,x+(y*z))
+DECLARE_OP_3_CONTRACTION(faa_r,x+(y+z))
+DECLARE_OP_3_CONTRACTION(fas_r,x+(y-z))
+DECLARE_OP_3_CONTRACTION(fad_r,x+(y/z))
+DECLARE_OP_3_CONTRACTION(fsm_r,x-(y*z))
+DECLARE_OP_3_CONTRACTION(fsa_r,x-(y+z))
+DECLARE_OP_3_CONTRACTION(fss_r,x-(y-z))
+DECLARE_OP_3_CONTRACTION(fsd_r,x-(y/z))
+DECLARE_OP_3_CONTRACTION(fdm_r,x/(y*z))
+DECLARE_OP_3_CONTRACTION(fda_r,x/(y+z))
+DECLARE_OP_3_CONTRACTION(fds_r,x/(y-z))
+DECLARE_OP_3_CONTRACTION(fdd_r,x/(y/z))
+
+#undef DECLARE_OP_3_CONTRACTION
 
 template <typename T>
 static inline T op0_impl(Op op) {
@@ -112,10 +145,38 @@ static inline T op2_impl(Op op, T x, T y) {
 template <typename T>
 static inline T op3_impl(Op op, T x, T y, T z) {
 	switch (op) {
-	case OP_FUSED_A_B_C_MUL_ADD: return fma1_impl(x, y, z);
-	case OP_FUSED_A_B_C_ADD_MUL: return fam1_impl(x, y, z);
-	case OP_FUSED_A_B_MUL_C_ADD: return fma2_impl(x, y, z);
-	case OP_FUSED_A_B_ADD_C_MUL: return fam2_impl(x, y, z);
+	case OP_FUSED_MM_L: return fmm_l_impl(x, y, z);
+	case OP_FUSED_MA_L: return fma_l_impl(x, y, z);
+	case OP_FUSED_MS_L: return fms_l_impl(x, y, z);
+	case OP_FUSED_MD_L: return fmd_l_impl(x, y, z);
+	case OP_FUSED_AM_L: return fam_l_impl(x, y, z);
+	case OP_FUSED_AA_L: return faa_l_impl(x, y, z);
+	case OP_FUSED_AS_L: return fas_l_impl(x, y, z);
+	case OP_FUSED_AD_L: return fad_l_impl(x, y, z);
+	case OP_FUSED_SM_L: return fsm_l_impl(x, y, z);
+	case OP_FUSED_SA_L: return fsa_l_impl(x, y, z);
+	case OP_FUSED_SS_L: return fss_l_impl(x, y, z);
+	case OP_FUSED_SD_L: return fsd_l_impl(x, y, z);
+	case OP_FUSED_DM_L: return fdm_l_impl(x, y, z);
+	case OP_FUSED_DA_L: return fda_l_impl(x, y, z);
+	case OP_FUSED_DS_L: return fds_l_impl(x, y, z);
+	case OP_FUSED_DD_L: return fdd_l_impl(x, y, z);
+	case OP_FUSED_MM_R: return fmm_r_impl(x, y, z);
+	case OP_FUSED_MA_R: return fma_r_impl(x, y, z);
+	case OP_FUSED_MS_R: return fms_r_impl(x, y, z);
+	case OP_FUSED_MD_R: return fmd_r_impl(x, y, z);
+	case OP_FUSED_AM_R: return fam_r_impl(x, y, z);
+	case OP_FUSED_AA_R: return faa_r_impl(x, y, z);
+	case OP_FUSED_AS_R: return fas_r_impl(x, y, z);
+	case OP_FUSED_AD_R: return fad_r_impl(x, y, z);
+	case OP_FUSED_SM_R: return fsm_r_impl(x, y, z);
+	case OP_FUSED_SA_R: return fsa_r_impl(x, y, z);
+	case OP_FUSED_SS_R: return fss_r_impl(x, y, z);
+	case OP_FUSED_SD_R: return fsd_r_impl(x, y, z);
+	case OP_FUSED_DM_R: return fdm_r_impl(x, y, z);
+	case OP_FUSED_DA_R: return fda_r_impl(x, y, z);
+	case OP_FUSED_DS_R: return fds_r_impl(x, y, z);
+	case OP_FUSED_DD_R: return fdd_r_impl(x, y, z);
 	default:     throw std::invalid_argument("Wrong number of arguments for operator");
 	}
 }

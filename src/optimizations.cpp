@@ -133,40 +133,201 @@ void Optimizer::contract(Ast *ast) {
 	matchAll([](Ast *ast) {
 		Ast a, b, c;
 		bool can_contract = true;
-		if (ast->op == OP_ADD && ast->children[1].op == OP_MUL) {
-			ast->op = OP_FUSED_A_B_C_MUL_ADD;
-			a = std::move(ast->children[0]);
-			b = std::move(ast->children[1].children[0]);
-			c = std::move(ast->children[1].children[1]);
-		} else if (ast->op == OP_ADD && ast->children[0].op == OP_MUL) {
-			ast->op = OP_FUSED_A_B_MUL_C_ADD;
+		if (ast->op == OP_MUL && ast->children[0].op == OP_MUL) {
+			ast->op = OP_FUSED_MM_L;
 			a = std::move(ast->children[0].children[0]);
 			b = std::move(ast->children[0].children[1]);
 			c = std::move(ast->children[1]);
-		} else {
-			can_contract = false;
-		}
-		if (can_contract) {
-			ast->children.clear();
-			ast->children.push_back(std::move(a));
-			ast->children.push_back(std::move(b));
-			ast->children.push_back(std::move(c));
-		}
-	}, ast);
-	matchAll([](Ast *ast) {
-		Ast a, b, c;
-		bool can_contract = true;
+		} else
+		if (ast->op == OP_ADD && ast->children[0].op == OP_MUL) {
+			ast->op = OP_FUSED_MA_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[0].op == OP_MUL) {
+			ast->op = OP_FUSED_MS_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[0].op == OP_MUL) {
+			ast->op = OP_FUSED_MD_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_MUL && ast->children[0].op == OP_ADD) {
+			ast->op = OP_FUSED_AM_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_ADD && ast->children[0].op == OP_ADD) {
+			ast->op = OP_FUSED_AA_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[0].op == OP_ADD) {
+			ast->op = OP_FUSED_AS_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[0].op == OP_ADD) {
+			ast->op = OP_FUSED_AD_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_MUL && ast->children[0].op == OP_SUB) {
+			ast->op = OP_FUSED_SM_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_ADD && ast->children[0].op == OP_SUB) {
+			ast->op = OP_FUSED_SA_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[0].op == OP_SUB) {
+			ast->op = OP_FUSED_SS_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[0].op == OP_SUB) {
+			ast->op = OP_FUSED_SD_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_MUL && ast->children[0].op == OP_DIV) {
+			ast->op = OP_FUSED_DM_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_ADD && ast->children[0].op == OP_DIV) {
+			ast->op = OP_FUSED_DA_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[0].op == OP_DIV) {
+			ast->op = OP_FUSED_DS_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[0].op == OP_DIV) {
+			ast->op = OP_FUSED_DD_L;
+			a = std::move(ast->children[0].children[0]);
+			b = std::move(ast->children[0].children[1]);
+			c = std::move(ast->children[1]);
+		} else
+			
+		if (ast->op == OP_MUL && ast->children[1].op == OP_MUL) {
+			ast->op = OP_FUSED_MM_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
 		if (ast->op == OP_MUL && ast->children[1].op == OP_ADD) {
-			ast->op = OP_FUSED_A_B_C_ADD_MUL;
+			ast->op = OP_FUSED_MA_R;
 			a = std::move(ast->children[0]);
 			b = std::move(ast->children[1].children[0]);
 			c = std::move(ast->children[1].children[1]);
-		} else if (ast->op == OP_MUL && ast->children[0].op == OP_ADD) {
-			ast->op = OP_FUSED_A_B_ADD_C_MUL;
-			a = std::move(ast->children[0].children[0]);
-			b = std::move(ast->children[0].children[1]);
-			c = std::move(ast->children[1]);
-		} else {
+		} else
+		if (ast->op == OP_MUL && ast->children[1].op == OP_SUB) {
+			ast->op = OP_FUSED_MS_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_MUL && ast->children[1].op == OP_DIV) {
+			ast->op = OP_FUSED_MD_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_ADD && ast->children[1].op == OP_MUL) {
+			ast->op = OP_FUSED_AM_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_ADD && ast->children[1].op == OP_ADD) {
+			ast->op = OP_FUSED_AA_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_ADD && ast->children[1].op == OP_SUB) {
+			ast->op = OP_FUSED_AS_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_ADD && ast->children[1].op == OP_DIV) {
+			ast->op = OP_FUSED_AD_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[1].op == OP_MUL) {
+			ast->op = OP_FUSED_SM_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[1].op == OP_ADD) {
+			ast->op = OP_FUSED_SA_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[1].op == OP_SUB) {
+			ast->op = OP_FUSED_SS_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_SUB && ast->children[1].op == OP_DIV) {
+			ast->op = OP_FUSED_SD_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[1].op == OP_MUL) {
+			ast->op = OP_FUSED_DM_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[1].op == OP_ADD) {
+			ast->op = OP_FUSED_DA_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[1].op == OP_SUB) {
+			ast->op = OP_FUSED_DS_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+		if (ast->op == OP_DIV && ast->children[1].op == OP_DIV) {
+			ast->op = OP_FUSED_DD_R;
+			a = std::move(ast->children[0]);
+			b = std::move(ast->children[1].children[0]);
+			c = std::move(ast->children[1].children[1]);
+		} else
+
+		{
 			can_contract = false;
 		}
 		if (can_contract) {
