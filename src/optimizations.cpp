@@ -111,10 +111,10 @@ void Optimizer::compressStack(Ast *ast) {
 			if (lhs.stack_size_needed < rhs.stack_size_needed)
 				std::swap(lhs, rhs);
 		}
-		int max_size = 1;
+		size_t max_size = 1;
 		for (unsigned i = 0; i < ast->children.size(); ++i) {
 			auto &child = ast->children[i];
-			int cur_size = child.stack_size_needed + i;
+			size_t cur_size = child.stack_size_needed + i;
 			if (max_size < cur_size)
 				max_size = cur_size;
 		}
