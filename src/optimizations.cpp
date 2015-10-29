@@ -11,42 +11,34 @@
 #include <climits>
 
 void Optimizer::optimizePowersToIntegerExponents(Ast *ast) {
-	std::function<void(Ast *ast)> visitor_lambda =
-	[&visitor_lambda](Ast *ast) {
-		if (ast->op == OP_POW && ast->children.size() == 2) {
-			Ast *child = &ast->children[1];
-			if (child->op == OP_CONST) {
-				double constant = child->d;
-				long i = long(constant);
-				if (constant == constant && constant == i && SCHAR_MIN <= i && i <= SCHAR_MAX) {
-					ast->children.pop_back();
-					if (i == 1) {
-						ast->op = OP_NOOP;
-					} else if (i == 2) {
-						ast->op = OP_SQ;
-					} else if (i == 3) {
-						ast->op = OP_CU;
-					} else {
-						ast->op = OP_POWI;
-						ast->i = i;
-					}
+	matchAll([](Ast *ast) {
+		if (ast->op != OP_POW || ast->children.size() != 2)
+			return;
+		Ast *exponent_node = &ast->children[1];
+		if (exponent_node->op == OP_CONST) {
+			double exponent = exponent_node->d;
+			if (exponent != exponent)
+				return;
+			long i = long(exponent);
+			if (exponent == (double)i && SCHAR_MIN <= i && i <= SCHAR_MAX) {
+				ast->children.pop_back();
+				if (i == 1) {
+					ast->op = OP_NOOP;
+				} else if (i == 2) {
+					ast->op = OP_SQ;
+				} else if (i == 3) {
+					ast->op = OP_CU;
+				} else {
+					ast->op = OP_POWI;
+					ast->i = i;
 				}
 			}
 		}
-
-		for (Ast &child : ast->children) {
-			visitor_lambda(&child);
-		}
-	};
-	visitor_lambda(ast);
+	}, ast);
 }
 
 void Optimizer::collapseConstants(Ast *ast) {
-	std::function<void(Ast *ast)> visitor_lambda =
-	[&visitor_lambda](Ast *ast) {
-		for (Ast &child : ast->children) {
-			visitor_lambda(&child);
-		}
+	matchAll([](Ast *ast) {
 		if (getOperandNumber(ast->op) != ast->children.size())
 			return;
 		bool has_non_constant_child = false;
@@ -93,55 +85,41 @@ void Optimizer::collapseConstants(Ast *ast) {
 			ast->op = OP_CONST;
 			ast->d = d;
 		}
-	};
-	visitor_lambda(ast);
+	}, ast);
 }
 
 void Optimizer::collapseSigns(Ast *ast) {
-	std::function<void(Ast *ast)> visitor_lambda =
-	[&visitor_lambda](Ast *ast) {
-		if (ast->op == OP_NEG) {
-			Ast *child = &ast->children[0];
-			if (child->op == OP_NEG) {
-				Ast *childchild = &child->children[0];
-				// undefined execution order forces us to use a temp
-				// otherwise childchild might get destroyed before it gets moved
-				Ast tmp = std::move(*childchild);
-				*ast = std::move(tmp);
-				visitor_lambda(ast);
-			}
-		} else {
-			for (Ast &child : ast->children) {
-				visitor_lambda(&child);
-			}
-		}
-	};
-	visitor_lambda(ast);
+	matchAll([](Ast *ast) {
+		if (ast->op != OP_NEG)
+			return;
+		Ast *child = &ast->children[0];
+		if (child->op != OP_NEG)
+			return;
+		Ast *childchild = &child->children[0];
+		// undefined execution order forces us to use a temp
+		// otherwise childchild might get destroyed before it gets moved
+		Ast tmp = std::move(*childchild);
+		*ast = std::move(tmp);
+	}, ast);
 }
 
 void Optimizer::compressStack(Ast *ast) {
-	std::function<int(Ast *ast)> visitor_lambda =
-	[&visitor_lambda](Ast *ast) -> int {
-		std::vector<int> sizes;
-		sizes.resize(ast->children.size());
-		for (unsigned i = 0; i < sizes.size(); ++i) {
-			sizes[i] = visitor_lambda(&ast->children[i]);
-		}
+	matchAll([](Ast *ast) {
 		if (ast->op == OP_ADD || ast->op == OP_MUL) {
-			if (sizes[0] < sizes[1]) {
-				std::swap(sizes[0], sizes[1]);
-				std::swap(ast->children[0], ast->children[1]);
-			}
+			auto &lhs = ast->children[0];
+			auto &rhs = ast->children[1];
+			if (lhs.stack_size_needed < rhs.stack_size_needed)
+				std::swap(lhs, rhs);
 		}
-		int max_size = -1;
-		for (unsigned i = 0; i < sizes.size(); ++i) {
-			int cur_size = sizes[i] + i;
+		int max_size = 1;
+		for (unsigned i = 0; i < ast->children.size(); ++i) {
+			auto &child = ast->children[i];
+			int cur_size = child.stack_size_needed + i;
 			if (max_size < cur_size)
 				max_size = cur_size;
 		}
-		return max_size;
-	};
-	visitor_lambda(ast);
+		ast->stack_size_needed = max_size;
+	}, ast);
 }
 
 void Optimizer::optimizeDefaults(Ast *ast) {

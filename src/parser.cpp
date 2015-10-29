@@ -410,6 +410,7 @@ void Parser::emitOp(Op op, double d) {
 }
 
 void Parser::emitOp(Ast &ast) {
+	ast.stack_size_needed = 0;
 	if (ast.op == OP_HLT)
 		return;
 	int n = getOperandNumber(ast.op);

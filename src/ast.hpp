@@ -16,6 +16,7 @@ struct Ast {
 		double d;
 		int i;
 	};
+	size_t stack_size_needed;
 };
 
 void print(const Ast &ast);

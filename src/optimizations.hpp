@@ -5,7 +5,9 @@
 #ifndef OPTIMIZATIONS_HPP_
 #define OPTIMIZATIONS_HPP_
 
-struct Ast;
+#include "ast.hpp"
+
+#include <vector>
 
 class Optimizer {
 public:
@@ -25,7 +27,26 @@ public:
 	void optimizeDefaults(Ast *);
 	void optimizeAll(Ast *);
 private:
-
+	template <typename Visitor>
+	void matchAll(Visitor visitor, Ast *ast) {
+		struct AstTraversalState {
+			Ast *ast;
+			size_t index;
+		};
+		std::vector<AstTraversalState> stack;
+		stack.push_back({ ast, 0 });
+		while (stack.size() > 0) {
+			AstTraversalState &state = stack.back();
+			size_t index = state.index;
+			if (index < state.ast->children.size()) {
+				state.index++;
+				stack.push_back({ &state.ast->children[index], 0 });
+			} else {
+				visitor(state.ast);
+				stack.pop_back();
+			}
+		}
+	}
 };
 
 #endif // OPTIMIZATIONS_HPP_
