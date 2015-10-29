@@ -396,20 +396,23 @@ int Parser::parse() {
 }
 
 void Parser::emitOp(Op op, int i) {
-	Ast ast;
-	ast.op = op;
+	Ast &&ast = Ast::create(op);
 	ast.i = i;
 	emitOp(ast);
 }
 
 void Parser::emitOp(Op op, double d) {
-	Ast ast;
-	ast.op = op;
+	Ast &&ast = Ast::create(op);
 	ast.d = d;
 	emitOp(ast);
 }
 
 void Parser::emitOp(Ast &ast) {
+	Ast copy = ast;
+	emitOp(std::move(copy));
+}
+
+void Parser::emitOp(Ast &&ast) {
 	ast.stack_size_needed = 0;
 	if (ast.op == OP_HLT)
 		return;

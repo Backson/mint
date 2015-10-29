@@ -59,6 +59,10 @@ enum Op {
 	OP_MUL,   // multiply
 	OP_DIV,   // divide
 	OP_POW,   // first value to the second value's power
+
+	// technical nodes used by the AST
+	OP_INVALID = 0x100, // invalid opcode
+
 };
 
 int getOperandNumber(int op);
