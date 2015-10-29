@@ -46,7 +46,8 @@ Benchmark::Benchmark() {
 	std::uniform_real_distribution<double> distr(0.0, 100.0);
 	for (int i = 0; i < MAXNARGS; ++i) {
 		for (int j = 0; j < N; ++j) {
-			data[i][j] = distr(rng);
+			//data[i][j] = distr(rng);
+			data[i][j] = 1.1;
 		}
 	}
 
@@ -133,7 +134,7 @@ void Benchmark::testResult(const NativeEntry &entry) {
 			++counter;
 		} else {
 			double diff = mint_res - native_res;
-			double rel_variance = (diff * diff) / (native_res * native_res);
+			double rel_variance = (diff / native_res) * (diff / native_res);
 			error_sum += rel_variance;
 			error_max = std::max(error_max, rel_variance);
 		}

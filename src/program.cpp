@@ -5,6 +5,7 @@
 #include "program.hpp"
 
 #include "ops.hpp"
+#include "double_n.hpp"
 #include "impl.hpp"
 #include "tokens.hpp"
 #include "parser.hpp"
@@ -171,9 +172,12 @@ double Program::run(const double *arguments) {
 
 
 void Program::run(double **arguments, double *result, size_t n) {
-	for (size_t i = 0; i < n; ++i) {
+	std::vector<double_n<16>> stack;
+	stack.resize(20);
+
+	for (size_t i = 0; i < n / 16; ++i) {
 		unsigned char const *ip = program.data(); // instruction pointer
-		double *sp = stack - 1; // stack pointer
+		double_n<16> *sp = stack.data() - 1; // stack pointer
 
 		while (*ip != OP_HLT) {
 			Op op = Op(*ip++);
@@ -181,37 +185,37 @@ void Program::run(double **arguments, double *result, size_t n) {
 			case OP_NOOP:
 				break;
 			case OP_CONST:
-				*++sp = constants[*ip++];
+				*++sp = double_n<16>::constant(constants[*ip++]);
 				break;
 			case OP_ARG:
-				*++sp = arguments[*ip++][i];
+				*++sp = double_n<16>::vals(&arguments[*ip++][i * 16]);
 				break;
 			case OP_POWI:
-				sp[0] = pow(sp[0], SCHAR_MIN + int(*ip++));
+				sp[0] = pow_i(sp[0], SCHAR_MIN + int(*ip++));
 				break;
 			default: {
 				int num_operands = getOperandNumber(op);
 				switch (num_operands) {
 				case 0: {
-					*++sp = op0_impl<double>(op);
+					*++sp = op0_impl<double_n<16>>(op);
 					break;
 				}
 				case 1: {
-					double x = *sp;
-					*sp = op1_impl(op, x);
+					double_n<16> x = *sp;
+					*sp = op1_impl<double_n<16>>(op, x);
 					break;
 				}
 				case 2: {
-					double y = *sp--;
-					double x = *sp;
-					*sp = op2_impl<double>(op, x, y);
+					double_n<16> y = *sp--;
+					double_n<16> x = *sp;
+					*sp = op2_impl<double_n<16>>(op, x, y);
 					break;
 				}
 				case 3: {
-					double z = *sp--;
-					double y = *sp--;
-					double x = *sp;
-					*sp = op3_impl<double>(op, x, y, z);
+					double_n<16> z = *sp--;
+					double_n<16> y = *sp--;
+					double_n<16> x = *sp;
+					*sp = op3_impl<double_n<16>>(op, x, y, z);
 					break;
 				}
 				}
@@ -219,6 +223,15 @@ void Program::run(double **arguments, double *result, size_t n) {
 			} // switch (*ip++)
 		} // while (*ip != OP_HLT)
 
-		result[i] = stack[0];
+		stack[0].unpack(result + 16 * i);
+	}
+
+	for (size_t i = 0; i < n % 16; ++i) {
+		double params[4];
+		params[0] = arguments[0][n / 16 * 16 + i];
+		params[1] = arguments[1][n / 16 * 16 + i];
+		params[2] = arguments[2][n / 16 * 16 + i];
+		params[3] = arguments[3][n / 16 * 16 + i];
+		result[n / 16 * 16 + i] = run(params);
 	}
 }

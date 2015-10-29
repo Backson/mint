@@ -2,6 +2,9 @@
 // Copyright (C) 2015 Lars Droegemueller
 // See LICENSE file for details
 
+#ifndef IMPL_HPP_
+#define IMPL_HPP_
+
 #include "ops.hpp"
 
 #include <cmath>
@@ -180,3 +183,5 @@ static inline T op3_impl(Op op, T x, T y, T z) {
 	default:     throw std::invalid_argument("Wrong number of arguments for operator");
 	}
 }
+
+#endif // IMPL_HPP_
