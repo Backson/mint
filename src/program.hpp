@@ -10,7 +10,14 @@
 
 class Program {
 public:
-	Program(const char * src);
+	enum Optimizations {
+		OPTIMIZE_NOTHING = 0,
+		OPTIMIZE_MANDATORY = 1,
+		OPTIMIZE_STRICT = 2,
+		OPTIMIZE_PRECISE = 3,
+
+	};
+	Program(const char * src, int optimize = OPTIMIZE_STRICT);
 	~Program() = default;
 
 	void print();
