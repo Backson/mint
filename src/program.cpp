@@ -17,7 +17,7 @@
 #include <cmath>
 #include <functional>
 
-Program::Program(const char * src) {
+Program::Program(const char * src, int optimize) {
 	Parser parser(src);
 	if (parser.parse()) {
 		//printf("Error: %s\n", parser.getError());
@@ -29,7 +29,20 @@ Program::Program(const char * src) {
 	Ast ast = parser.getAst();
 
 	Optimizer optimizer;
-	optimizer.optimizeDefaults(&ast);
+	switch (optimize) {
+	default:
+	case OPTIMIZE_NOTHING:
+		break;
+	case OPTIMIZE_MANDATORY:
+		optimizer.optimizePowersToIntegerExponents(&ast);
+		break;
+	case OPTIMIZE_STRICT:
+		optimizer.optimizePowersToIntegerExponents(&ast);
+		optimizer.collapseConstants(&ast);
+		optimizer.collapseSigns(&ast);
+		optimizer.compressStack(&ast);
+		break;
+	}
 
 	auto program_p = &program;
 	auto constants_p = &constants;

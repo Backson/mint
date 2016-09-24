@@ -23,9 +23,6 @@ public:
 	/// rebalances the AST, so calculations which require lots of space are done first.  This
 	/// can sometimes reduce the total necessary amount of space on the stack.
 	void compressStack(Ast *);
-
-	void optimizeDefaults(Ast *);
-	void optimizeAll(Ast *);
 private:
 	template <typename Visitor>
 	void matchAll(Visitor visitor, Ast *ast) {

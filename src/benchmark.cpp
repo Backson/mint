@@ -21,6 +21,8 @@ static const int N = 100000;
 static const double NATIVE_TIME_THRESHOLD = 0.100;
 static const int NATIVE_TIME_MULTIPLIER = 4;
 
+static const auto OPTIMIZATION_LEVEL = Program::OPTIMIZE_STRICT;
+
 class Benchmark {
 public:
 	Benchmark();
@@ -68,7 +70,7 @@ void Benchmark::testCompilation(const NativeEntry &entry) {
 	printf("===== %d =====\n", entry.i);
 	printf(" %s\n", entry.expr.c_str());
 	try {
-		Program program(str);
+		Program program(str, OPTIMIZATION_LEVEL);
 		program.print();
 	} catch (...) {
 		printf("ERROR\n", str);
@@ -79,7 +81,7 @@ void Benchmark::testCompilation(const NativeEntry &entry) {
 void Benchmark::testResult(const NativeEntry &entry) {
 	std::unique_ptr<Program> program;
 	try {
-		auto ptr = new Program(entry.expr.c_str());
+		auto ptr = new Program(entry.expr.c_str(), OPTIMIZATION_LEVEL);
 		program = std::unique_ptr<Program>(ptr);
 	} catch (...) {
 		return;

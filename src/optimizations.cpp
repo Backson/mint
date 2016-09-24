@@ -121,14 +121,3 @@ void Optimizer::compressStack(Ast *ast) {
 		ast->stack_size_needed = max_size;
 	}, ast);
 }
-
-void Optimizer::optimizeDefaults(Ast *ast) {
-	optimizeAll(ast);
-}
-
-void Optimizer::optimizeAll(Ast *ast) {
-	optimizePowersToIntegerExponents(ast);
-	collapseConstants(ast);
-	collapseSigns(ast);
-	compressStack(ast);
-}
