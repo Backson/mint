@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\ast.hpp" />
-    <ClInclude Include="..\..\src\double_n.hpp" />
     <ClInclude Include="..\..\src\impl.hpp" />
     <ClInclude Include="..\..\src\ops.hpp" />
     <ClInclude Include="..\..\src\optimizations.hpp" />

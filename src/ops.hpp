@@ -60,40 +60,6 @@ enum Op {
 	OP_DIV,   // divide
 	OP_POW,   // first value to the second value's power
 
-	// contractions
-	OP_FUSED_MM_L,
-	OP_FUSED_MA_L,
-	OP_FUSED_MS_L,
-	OP_FUSED_MD_L,
-	OP_FUSED_AM_L,
-	OP_FUSED_AA_L,
-	OP_FUSED_AS_L,
-	OP_FUSED_AD_L,
-	OP_FUSED_SM_L,
-	OP_FUSED_SA_L,
-	OP_FUSED_SS_L,
-	OP_FUSED_SD_L,
-	OP_FUSED_DM_L,
-	OP_FUSED_DA_L,
-	OP_FUSED_DS_L,
-	OP_FUSED_DD_L,
-	OP_FUSED_MM_R,
-	OP_FUSED_MA_R,
-	OP_FUSED_MS_R,
-	OP_FUSED_MD_R,
-	OP_FUSED_AM_R,
-	OP_FUSED_AA_R,
-	OP_FUSED_AS_R,
-	OP_FUSED_AD_R,
-	OP_FUSED_SM_R,
-	OP_FUSED_SA_R,
-	OP_FUSED_SS_R,
-	OP_FUSED_SD_R,
-	OP_FUSED_DM_R,
-	OP_FUSED_DA_R,
-	OP_FUSED_DS_R,
-	OP_FUSED_DD_R,
-
 	// technical nodes used by the AST
 	OP_INVALID = 0x100, // invalid opcode
 

@@ -10,20 +10,12 @@
 
 class Program {
 public:
-	enum Optimizations {
-		OPTIMIZE_NOTHING = 0,
-		OPTIMIZE_MANDATORY = 1,
-		OPTIMIZE_STRICT = 2,
-		OPTIMIZE_PRECISE = 3,
-
-	};
-	Program(const char * src, int optimize = OPTIMIZE_STRICT);
+	Program(const char * src);
 	~Program() = default;
 
 	void print();
-	
-	double run(const double *arguments);
-	void run(double **arguments, double *result, size_t n);
+
+	double run(const double * arguments);
 
 private:
 	std::vector<unsigned char> program;
