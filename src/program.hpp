@@ -14,8 +14,9 @@ public:
 	~Program() = default;
 
 	void print();
-
-	double run(const double * arguments);
+	
+	double run(const double *arguments);
+	void run(double **arguments, double *result, size_t n);
 
 private:
 	std::vector<unsigned char> program;

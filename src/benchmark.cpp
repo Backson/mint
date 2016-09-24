@@ -2,235 +2,163 @@
 // Copyright (C) 2015 Lars Droegemueller
 // See LICENSE file for details
 
-#include <cstdio>
-#include <algorithm>
-#include <chrono>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <cmath>
 #include <random>
+#include <chrono>
+#include <algorithm>
+#include <memory>
 
 #include "program.hpp"
 
-typedef double (*func_t)(const double *);
+#include "expressions_test.hpp"
 
-static const double pi = 3.14159265358979323846264338327950288419716939937510;
-static const double e  = 2.71828182845904523536028747135266249775724709369995;
+static const int MAXNARGS = 4;
+static const int N = 100000;
+static const double NATIVE_TIME_THRESHOLD = 0.100;
+static const int NATIVE_TIME_MULTIPLIER = 4;
 
-void test(int N, int NARGS, double ** data, const char * program_str, func_t native_f) {
-	using namespace std::chrono;
-
-	// build program
-	printf("%s\n", program_str);
-	Program p(program_str);
-	p.print();
-
-	double params[3];
+class Benchmark {
+public:
+	Benchmark();
+	~Benchmark();
 	
-	double *native_results = new double[N];
-	double *mint_results = new double[N];
+	void testCompilation(const NativeEntry &entry);
+	void testResult(const NativeEntry &entry);
 
-	// benchmarks
-	high_resolution_clock::time_point t1, t2;
-
-	// native
-	t1 = high_resolution_clock::now();
-	for (int i = 0; i < N; ++i) {
-		params[0] = data[0][i];
-		params[1] = data[1][i];
-		params[2] = data[2][i];
-		native_results[i] = native_f(params);
-	}
-	t2 = high_resolution_clock::now();
-	double time_reference = duration_cast<duration<double>>(t2 - t1).count();
-	
-	// mint
-	t1 = high_resolution_clock::now();
-	for (int i = 0; i < N; ++i) {
-		params[0] = data[0][i];
-		params[1] = data[1][i];
-		params[2] = data[2][i];
-		mint_results[i] = p.run(params);
-	}
-	t2 = high_resolution_clock::now();
-	double time_program = duration_cast<duration<double>>(t2 - t1).count();
-
-	// tests
-	int mint_counter = 0;
-	double mint_error_sum = 0.0;
-	double mint_error_max = 0.0;
-	for (int i = 0; i < N; ++i) {
-		double native_res = native_results[i];
-		double mint_res = mint_results[i];
-		if (native_res == mint_res) {
-			++mint_counter;
-		} else {
-			double diff = mint_res - native_res;
-			double rel_variance = (diff * diff) / (native_res * native_res);
-			mint_error_sum += rel_variance;
-			mint_error_max = std::max(mint_error_max, rel_variance);
-		}
-	}
-
-	delete[] native_results;
-	delete[] mint_results;
-
-	printf("%12s %12s %12s\n", "",
-		"native", "mint");
-	printf("%12s %12f %12f\n", "time",
-		time_reference, time_program);
-	printf("%12s %11.1f%% %11.1f%%\n", "rel speed", 100.0,
-		100.0 * time_reference / time_program);
-	printf("%12s %12d %12d\n", "accuracy", N,
-		mint_counter);
-	printf("%12s %12.4f %12.4e\n", "avg error", 0.0,
-		mint_counter == N ? 0.0 : sqrt(mint_error_sum / (N - mint_counter)));
-	printf("%12s %12.4f %12.4e\n", "max error", 0.0,
-		sqrt(mint_error_max));
-	printf("\n");
-}
-
-double native_ex1(const double * d) {
-	return (d[1] + d[0]);
-}
-
-double native_ex2(const double * d) {
-	return 2 * (d[1] + d[0]);
-}
-
-double native_ex3(const double * d) {
-	return ((1.23 * (d[0] * d[0])) / d[1]) - 123.123;
-}
-
-double native_ex4(const double * d) {
-	return (d[1] + d[0] / d[1]) * (d[0] - d[1] / d[0]);
-}
-
-double native_ex5(const double * d) {
-	return d[0] / ((d[0] + d[1]) + (d[0] - d[1])) / d[1];
-}
-
-double native_ex6(const double * d) {
-	return 1 - ((d[0] * d[1]) + (d[1] / d[0])) - 3;
-}
-
-double native_ex7(const double * d) {
-	return 1.1 * d[0] + 2.2 * (d[1] * d[1]) - 3.3 * (d[0] * d[0] * d[0]) + 4.4 * pow(d[1], 15) - 5.5 * pow(d[0], 23) + 6.6 * pow(d[1], 55);
-}
-
-double native_ex8(const double * d) {
-	return sin(2 * d[0]) + cos(pi / d[1]);
-}
-
-double native_ex9(const double * d) {
-	return 1 - sin(2 * d[0]) + cos(pi / d[1]);
-}
-
-double native_ex10(const double * d) {
-	return sqrt(111.111 - sin(2 * d[0]) + cos(pi / d[1]) / 333.333);
-}
-
-double native_ex11(const double * d) {
-	return (d[0] * d[0] / sin(2 * pi / d[1])) - d[0] / 2;
-}
-
-double native_ex12(const double * d) {
-	return d[0] + (cos(d[1] - sin(2 / d[0] * pi)) - sin(d[0] - cos(2 * d[1] / pi))) - d[1];
-}
-
-double native_ex13(const double * d) {
-	return d[0];
-}
-
-double native_ex14(const double * d) {
-	return d[0] * d[0];
-}
-
-double native_ex15(const double * d) {
-	double x = (d[0] - d[2]) / d[1];
-	return exp(-0.5 * x * x) / (sqrt(2 * pi) * d[1]);
-}
-
-double native_ex16(const double * d) {
-	return tan(d[0]) + trunc(d[1]) + cos(abs(d[2])) - floor(d[0]) + atan(5) - acosh(pi);
-}
-
-double native_ex17(const double * d) {
-	return d[0] + d[0];
-}
-
-double native_ex18(const double *d) {
-	double x = d[0];
-	double y = d[1];
-	double z = d[2];
-	double w = d[3];
-	return ((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))));
-}
-
-double native_ex19(const double *d) {
-	double a = d[0];
-	double b = d[1];
-	return tan((((cos(tan(((tan((((1.92 + (pi / (pi - sin((cos(((((tan((((sin((((sin((0.40 + cos((tan((tan((((sin(((((((e + 2.58) + 3.88) + b) - b) + a) + e))*0.10) + a) + b))*e))*a)))) + a) + pi) / 0.78)) + a) / pi)*3.29))*a) / b) / 2.71)*3.53)) + 1.87))))) / 2.72) / e)) / a) + 0.49))) + pi) + a) - b));
-}
-
-double native_ex20(const double *d) {
-	double a = d[0];
-	double b = d[1];
-	return a + b;
-}
-
-double native_ex21(const double *d) {
-	double x = d[0];
-	double y = d[1];
-	double z = d[2];
-	double w = d[3];
-	return x + (y * (z + w));
-}
-
-int main(int argc, char *argv[]) {
-	static const int N = 1000000;
-	static const int MAXNARGS = 4;
-
-	// prepare some input data
+private:
 	double *data[MAXNARGS];
+
+	double *native_results;
+	double *mint_results;
+};
+
+Benchmark::Benchmark() {
+	// prepare some input data
 	for (int i = 0; i < MAXNARGS; ++i) {
 		data[i] = new double[N];
 	}
 	std::default_random_engine rng;
 	rng.seed(42);
-	std::uniform_real_distribution<double> distr(0.0, 10.0);
+	std::uniform_real_distribution<double> distr(0.0, 100.0);
 	for (int i = 0; i < MAXNARGS; ++i) {
 		for (int j = 0; j < N; ++j) {
 			data[i][j] = distr(rng);
 		}
 	}
 
-	// benchmarks
-	test(N, 2, &data[0], "(y + x)", &native_ex1);
-	test(N, 2, &data[0], "2 * (y + x)", &native_ex2);
-	test(N, 2, &data[0], "((1.23 * x^2) / y) - 123.123", &native_ex3);
-	test(N, 2, &data[0], "(y + x / y) * (x - y / x)", &native_ex4);
-	test(N, 2, &data[0], "x / ((x + y) + (x - y)) / y", &native_ex5);
-	test(N, 2, &data[0], "1 - ((x * y) + (y / x)) - 3", &native_ex6);
-	test(N, 2, &data[0], "1.1*x^1 + 2.2*y^2 - 3.3*x^3 + 4.4*y^15 - 5.5*x^23 + 6.6*y^55", &native_ex7);
-	test(N, 2, &data[0], "sin(2 * x) + cos(pi / y)", &native_ex8);
-	test(N, 2, &data[0], "1 - sin(2 * x) + cos(pi / y)", &native_ex9);
-	test(N, 2, &data[0], "sqrt(111.111 - sin(2 * x) + cos(pi / y) / 333.333)", &native_ex10);
-	test(N, 2, &data[0], "(x^2 / sin(2 * pi / y)) -x / 2", &native_ex11);
-	test(N, 2, &data[0], "x + (cos(y - sin(2 / x * pi)) - sin(x - cos(2 * y / pi))) - y", &native_ex12);
-	test(N, 1, &data[0], "x", &native_ex13);
-	test(N, 1, &data[0], "x^2", &native_ex14);
-	test(N, 3, &data[0], "exp(-0.5*((x-z)/y)^2)/(sqrt(2*pi)*y)", &native_ex15);
-	test(N, 3, &data[0], "tan(x) + trunc(y) + cos(abs(z)) - floor(x) + arctan(5) - arcosh(pi)", &native_ex16);
-	test(N, 1, &data[0], "+ + + + x + + + x", &native_ex17);
-	test(N, 4, &data[0], "((((((((x+y)*7.123)-w)-((x+y)-(7.123*w)))-((x*(y-(7.123*w)))/((x*y)+(7.123+w))))-((((x+y)-(7.123*w))+((x/y)+(7.123+w)))+(((x*y)+(7.123+w))*((x/y)/(7.123-w)))))-(((((x/y)-(7.321/w))*((x-y)+(7.321+w)))*(((x-y)-(7.321+w))+((x-y)*(7.321/w))))*((((x-y)+(7.321+w))-((x*y)*(7.321+w)))-(((x-y)*(7.321/w))/(x+((y/7.321)+w)))))))", &native_ex18);
-	test(N, 2, &data[0], "tan((((cos(tan(((tan((((1.92+(pi/(pi-sin((cos(((((tan((((sin((((sin((0.40+cos((tan((tan((((sin(((((((e+2.58)+3.88)+b)-b)+a)+e))*0.10)+a)+b))*e))*a))))+a)+pi)/0.78))+a)/pi)*3.29))*a)/b)/2.71)*3.53))+1.87)))))/2.72)/e))/a)+0.49)))+pi)+a)-b))", &native_ex19);
-	test(N, 2, &data[0], "- (- - + - a) + (((((((a)+b))-b)))) + b - ((a))", &native_ex20);
-	test(N, 4, &data[0], "x + (y * (z + w))", &native_ex21);
+	native_results = new double[N];
+	mint_results = new double[N];
+}
 
+Benchmark::~Benchmark() {
 	for (int i = 0; i < MAXNARGS; ++i) {
 		delete[] data[i];
 	}
 
-	// halt program execution
-	printf("done.");
+	delete[] native_results;
+	delete[] mint_results;
+}
+
+void Benchmark::testCompilation(const NativeEntry &entry) {
+	const char *str = entry.expr.c_str();
+	printf("===== %d =====\n", entry.i);
+	printf(" %s\n", entry.expr.c_str());
+	try {
+		Program program(str);
+		program.print();
+	} catch (...) {
+		printf("ERROR\n", str);
+	}
+	printf("\n");
+}
+
+void Benchmark::testResult(const NativeEntry &entry) {
+	std::unique_ptr<Program> program;
+	try {
+		auto ptr = new Program(entry.expr.c_str());
+		program = std::unique_ptr<Program>(ptr);
+	} catch (...) {
+		return;
+	}
+
+	using namespace std::chrono;
+	high_resolution_clock::time_point t1, t2;
+	double time_native, time_mint;
+	int rounds = 1;
+
+	// native
+	RECOMPUTE:
+	t1 = high_resolution_clock::now();
+	for (int round = 0; round < rounds; ++round)
+	for (int i = 0; i < N; ++i) {
+		double params[4];
+		params[0] = data[(0 + round) % 4][i];
+		params[1] = data[(1 + round) % 4][i];
+		params[2] = data[(2 + round) % 4][i];
+		params[3] = data[(3 + round) % 4][i];
+		native_results[i] = entry.native(params);
+	}
+	t2 = high_resolution_clock::now();
+	time_native = duration_cast<duration<double>>(t2 - t1).count();
+	if (time_native < NATIVE_TIME_THRESHOLD) {
+		rounds *= NATIVE_TIME_MULTIPLIER;
+		goto RECOMPUTE;
+	}
+	
+	// mint
+	t1 = high_resolution_clock::now();
+	for (int round = 0; round < rounds; ++round) {
+		double *params[4];
+		params[0] = data[(0 + round) % 4];
+		params[1] = data[(1 + round) % 4];
+		params[2] = data[(2 + round) % 4];
+		params[3] = data[(3 + round) % 4];
+		program->run(params, mint_results, N);
+	}
+	t2 = high_resolution_clock::now();
+	time_mint = duration_cast<duration<double>>(t2 - t1).count();
+
+	// comparison
+	int counter = 0;
+	double error_sum = 0.0;
+	double error_max = 0.0;
+	for (int i = 0; i < N; ++i) {
+		double native_res = native_results[i];
+		double mint_res = mint_results[i];
+		if (native_res == mint_res) {
+			++counter;
+		} else {
+			double diff = mint_res - native_res;
+			double rel_variance = (diff * diff) / (native_res * native_res);
+			error_sum += rel_variance;
+			error_max = std::max(error_max, rel_variance);
+		}
+	}
+
+	char buffer[128];
+	sprintf(buffer, "%4d %4d %12.6f %12.6f -- %8d %12.4e %12.4e", (int)entry.i, rounds,
+		time_native, time_mint,
+		counter,
+		counter == N ? 0.0 : sqrt(error_sum / (N - counter)),
+		sqrt(error_max)
+	);
+	printf("%s\n", buffer);
+}
+
+
+int main(int argc, char *argv[]) {
+	Benchmark bm;
+	
+	for (const auto &entry : arithmetic_expressions_3_entries) bm.testCompilation(entry);
+	for (const auto &entry : selection_entries) bm.testCompilation(entry);
+	for (auto &entry : arithmetic_expressions_3_entries) bm.testResult(entry);
+	for (auto &entry : selection_entries) bm.testResult(entry);
+
+	printf("done.\n");
 	getchar();
 	return 0;
 }
