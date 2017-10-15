@@ -4,3 +4,6 @@ msvc/**/Win32/
 msvc/mint.opensdf
 msvc/mint.sdf
 msvc/mint.*.suo
+*.VC.db
+*.VC.VC.opendb
+.suo
