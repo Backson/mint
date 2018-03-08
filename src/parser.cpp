@@ -241,7 +241,7 @@ int Parser::parse() {
 				continue;
 
 			case TOK_ARG:
-				if (canBeValue(lastTokenId)) {
+				if (lastTokenId >= 0 && canBeValue(lastTokenId)) {
 					raiseError("unexpected primary value");
 					return 1;
 				}
@@ -253,7 +253,7 @@ int Parser::parse() {
 				break;
 
 			case TOK_LIT:
-				if (canBeValue(lastTokenId)) {
+				if (lastTokenId >= 0 && canBeValue(lastTokenId)) {
 					raiseError("unexpected primary value");
 					return 1;
 				}
@@ -261,7 +261,7 @@ int Parser::parse() {
 				break;
 
 			case TOK_F_PI:
-				if (canBeValue(lastTokenId)) {
+				if (lastTokenId >= 0 && canBeValue(lastTokenId)) {
 					raiseError("unexpected primary value");
 					return 1;
 				}
@@ -269,7 +269,7 @@ int Parser::parse() {
 				break;
 
 			case TOK_F_E:
-				if (canBeValue(lastTokenId)) {
+				if (lastTokenId >= 0 && canBeValue(lastTokenId)) {
 					raiseError("unexpected primary value");
 					return 1;
 				}
@@ -281,7 +281,7 @@ int Parser::parse() {
 				break;
 
 			case TOK_LPAREN:
-				if (!canBeFunction(lastTokenId) && !expectExpr) {
+				if (lastTokenId >= 0 && !canBeFunction(lastTokenId) && !expectExpr) {
 					raiseError("unexpected open parenthesis");
 					return 1;
 				}
@@ -312,7 +312,7 @@ int Parser::parse() {
 			case TOK_F_TRUNC:
 			case TOK_F_POW:
 			case TOK_UN_NEG:
-				if (canBeValue(lastTokenId)) {
+				if (lastTokenId >= 0 && canBeValue(lastTokenId)) {
 					raiseError("unexpected prefix operator");
 					return 1;
 				}
