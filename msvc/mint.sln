@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "benchmark\benchmark.vcxproj", "{E95710B6-5C1A-416B-BD4D-97BB5485DDF6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -9,6 +9,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "benchmark\benc
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mint", "mint\mint.vcxproj", "{249085BA-84C5-425D-ABAA-117E101CFE7F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "interactive", "interactive\interactive.vcxproj", "{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{249085BA-84C5-425D-ABAA-117E101CFE7F} = {249085BA-84C5-425D-ABAA-117E101CFE7F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +39,14 @@ Global
 		{249085BA-84C5-425D-ABAA-117E101CFE7F}.Release|Win32.Build.0 = Release|Win32
 		{249085BA-84C5-425D-ABAA-117E101CFE7F}.Release|x64.ActiveCfg = Release|x64
 		{249085BA-84C5-425D-ABAA-117E101CFE7F}.Release|x64.Build.0 = Release|x64
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Debug|Win32.Build.0 = Debug|Win32
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Debug|x64.ActiveCfg = Debug|x64
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Debug|x64.Build.0 = Debug|x64
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Release|Win32.ActiveCfg = Release|Win32
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Release|Win32.Build.0 = Release|Win32
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Release|x64.ActiveCfg = Release|x64
+		{C54E9358-490F-462F-AE8F-B3EE34B5FA3F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
