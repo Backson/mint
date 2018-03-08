@@ -44,10 +44,18 @@ Program::Program(const char * src, int optimize) {
 		break;
 	}
 
+	init(ast);
+}
+
+Program::Program(const Ast &ast) {
+	init(ast);
+}
+
+void Program::init(const Ast &ast) {
 	auto program_p = &program;
 	auto constants_p = &constants;
 	std::function<void(const Ast &ast)> visitor_lambda =
-	[program_p, constants_p, &visitor_lambda](const Ast &ast) {
+		[program_p, constants_p, &visitor_lambda](const Ast &ast) {
 		for (const Ast &child : ast.children) {
 			visitor_lambda(child);
 		}
@@ -66,7 +74,8 @@ Program::Program(const char * src, int optimize) {
 			}
 			if (constant_index >= 0) {
 				program_p->push_back((unsigned char)constant_index);
-			} else {
+			}
+			else {
 				program_p->push_back((unsigned char)constants_p->size());
 				constants_p->push_back(ast.d);
 			}

@@ -8,6 +8,8 @@
 #include <exception>
 #include <vector>
 
+#include "ast.hpp"
+
 class Program {
 public:
 	enum Optimizations {
@@ -17,7 +19,8 @@ public:
 		OPTIMIZE_PRECISE = 3,
 
 	};
-	Program(const char * src, int optimize = OPTIMIZE_STRICT);
+	Program(const char * src, int optimize = OPTIMIZE_MANDATORY);
+	Program(const Ast &ast);
 	~Program() = default;
 
 	void print();
@@ -26,6 +29,7 @@ public:
 	void run(double **arguments, double *result, size_t n);
 
 private:
+	void init(const Ast &ast);
 	std::vector<unsigned char> program;
 	std::vector<double> constants;
 	double stack[100];
