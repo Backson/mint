@@ -67,13 +67,13 @@ Benchmark::~Benchmark() {
 
 void Benchmark::testCompilation(const NativeEntry &entry) {
 	const char *str = entry.expr.c_str();
-	printf("===== %d =====\n", entry.i);
+	printf("===== %d =====\n", (int) entry.i);
 	printf(" %s\n", entry.expr.c_str());
 	try {
 		Program program(str, OPTIMIZATION_LEVEL);
 		program.print();
 	} catch (...) {
-		printf("ERROR\n", str);
+		printf("ERROR %s\n", str);
 	}
 	printf("\n");
 }
