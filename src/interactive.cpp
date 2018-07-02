@@ -60,28 +60,36 @@ int main(int argc, char **argv) {
 			printf("Hello, World!\n");
 		}
 		else if (startswith(buffer, "set ")) {
-			strcpy_s(expr, buffer_size, &buffer[4]);
-		}
-		else if (strcmp(buffer, "print expr") == 0) {
-			printf("%s\n", expr);
-		}
-		else if (strcmp(buffer, "make ast") == 0) {
-			Parser parser(expr);
-			if (parser.parse()) {
-				printf("Error: %s\n", parser.getError());
-				printf("%s\n", expr);
-				printf("%*s\n", parser.getLastToken().pos + 1, "^");
+			// check argument
+			if (strlen(buffer) < 5) {
+				printf("Error: Expected expression\n");
+				continue;
 			}
-			else {
-				if (ast) delete ast;
+
+			// copy expression into buffer
+			strcpy_s(expr, buffer_size, &buffer[4]);
+
+			// parse expression
+			if (ast) delete ast;
+			ast = nullptr;
+			Parser parser(expr);
+			if (!parser.parse()) {
 				ast = new Ast();
 				*ast = parser.getAst();
 			}
-		}
-		else if (strcmp(buffer, "print ast") == 0) {
-			if (ast) {
-				print(*ast);
+			else {
+				printf("Error: %s\n", parser.getError());
+				printf("%s\n", expr);
+				printf("%*s\n", parser.getLastToken().pos + 1, "^");
+				continue;
 			}
+		}
+		else if (strcmp(buffer, "expr") == 0) {
+			printf("%s\n", expr);
+		}
+		else if (strcmp(buffer, "ast") == 0) {
+			if (ast)
+				print(*ast);
 		}
 		else if (strcmp(buffer, "optimize powi") == 0) {
 			if (ast) {
@@ -107,14 +115,10 @@ int main(int argc, char **argv) {
 				optimizer.compressStack(ast);
 			}
 		}
-		else if (strcmp(buffer, "make prog") == 0) {
+		else if (strcmp(buffer, "program") == 0) {
 			if (ast) {
 				if (prog) delete prog;
 				prog = new Program(*ast);
-			}
-		}
-		else if (strcmp(buffer, "print prog") == 0) {
-			if (prog) {
 				prog->print();
 			}
 		}
