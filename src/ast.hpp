@@ -28,8 +28,7 @@ struct Ast {
 	}
 };
 
-
-
-void print(const Ast &ast);
+void printTree(const Ast &ast);
+void printExpr(const Ast &ast);
 
 #endif // AST_HPP_

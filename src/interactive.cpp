@@ -85,11 +85,12 @@ int main(int argc, char **argv) {
 			}
 		}
 		else if (strcmp(buffer, "expr") == 0) {
-			printf("%s\n", expr);
+			if (ast)
+				printExpr(*ast);
 		}
 		else if (strcmp(buffer, "ast") == 0) {
 			if (ast)
-				print(*ast);
+				printTree(*ast);
 		}
 		else if (strcmp(buffer, "optimize powi") == 0) {
 			if (ast) {
