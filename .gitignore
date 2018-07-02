@@ -7,3 +7,5 @@ msvc/mint.*.suo
 *.VC.db
 *.VC.VC.opendb
 .suo
+msvc/.vs/
+msvc/Build/
