@@ -34,8 +34,8 @@ static const struct {
 	{ TOK_PLUS,    0, 0, 0, 0, 0, -1, NONE,  OP_NOOP },
 	{ TOK_MINUS,   0, 0, 0, 0, 0, -1, NONE,  OP_NOOP },
 
-	{ TOK_UN_NEG,  0, 1, 0, 0, 1, 10, RIGHT, OP_NEG },
-	{ TOK_UN_PLUS, 0, 1, 0, 0, 1, 10, RIGHT, OP_NOOP },
+	{ TOK_UN_NEG,  0, 1, 0, 0, 1,  1, RIGHT, OP_NEG },
+	{ TOK_UN_PLUS, 0, 1, 0, 0, 1,  1, RIGHT, OP_NOOP },
 
 	{ TOK_F_PI,    1, 0, 0, 1, 0, 10, NONE,  OP_PI },
 	{ TOK_F_E,     1, 0, 0, 1, 0, 10, NONE,  OP_E },

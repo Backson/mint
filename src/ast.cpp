@@ -60,14 +60,26 @@ static void printExprInternal(const Ast &ast) {
 		printf("e");
 		break;
 	case OP_NEG:
-		printf("-(");
-		printExprInternal(ast.children[0]);
-		printf(")");
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("-(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printf("-");
+			printExprInternal(ast.children[0]);
+		}
 		break;
 	case OP_INV:
-		printf("1/(");
-		printExprInternal(ast.children[0]);
-		printf(")");
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("1/(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printf("1/");
+			printExprInternal(ast.children[0]);
+		}
 		break;
 	case OP_SQ:
 		printf("(");
@@ -190,44 +202,110 @@ static void printExprInternal(const Ast &ast) {
 		printf(")");
 		break;
 	case OP_POWI:
-		printf("(");
-		printExprInternal(ast.children[0]);
-		printf(")^%d", ast.i);
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[0]);
+		}
+		printf("^%d", ast.i);
 		break;
 	case OP_ADD:
-		printf("(");
-		printExprInternal(ast.children[0]);
-		printf(")+(");
-		printExprInternal(ast.children[1]);
-		printf(")");
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[0]);
+		}
+		printf("+");
+		if (getOperatorPrecedence(ast.children[1].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[1]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[1]);
+		}
 		break;
 	case OP_SUB:
-		printf("(");
-		printExprInternal(ast.children[0]);
-		printf(")-(");
-		printExprInternal(ast.children[1]);
-		printf(")");
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[0]);
+		}
+		printf("-");
+		if (getOperatorPrecedence(ast.children[1].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[1]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[1]);
+		}
 		break;
 	case OP_MUL:
-		printf("(");
-		printExprInternal(ast.children[0]);
-		printf(")*(");
-		printExprInternal(ast.children[1]);
-		printf(")");
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[0]);
+		}
+		printf("*");
+		if (getOperatorPrecedence(ast.children[1].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[1]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[1]);
+		}
 		break;
 	case OP_DIV:
-		printf("(");
-		printExprInternal(ast.children[0]);
-		printf(")/(");
-		printExprInternal(ast.children[1]);
-		printf(")");
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[0]);
+		}
+		printf("/");
+		if (getOperatorPrecedence(ast.children[1].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[1]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[1]);
+		}
 		break;
 	case OP_POW:
-		printf("(");
-		printExprInternal(ast.children[0]);
-		printf(")^(");
-		printExprInternal(ast.children[1]);
-		printf(")");
+		if (getOperatorPrecedence(ast.children[0].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[0]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[0]);
+		}
+		printf("^");
+		if (getOperatorPrecedence(ast.children[1].op) < getOperatorPrecedence(ast.op)) {
+			printf("(");
+			printExprInternal(ast.children[1]);
+			printf(")");
+		}
+		else {
+			printExprInternal(ast.children[1]);
+		}
 		break;
 	default:
 		printf("\nError: Invalid operator.");

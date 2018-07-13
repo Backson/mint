@@ -68,5 +68,6 @@ enum Op {
 int getOperandNumber(int op);
 bool isOperatorConstant(int op);
 const char *getOperatorName(int op);
+int getOperatorPrecedence(int op);
 
 #endif
