@@ -142,7 +142,7 @@ void Benchmark::testResult(const NativeEntry &entry) {
 	}
 
 	char buffer[128];
-	sprintf(buffer, "%4d %4d %12.6f %12.6f -- %8d %12.4e %12.4e", (int)entry.i, rounds,
+	snprintf(buffer, 128, "%4d %4d %12.6f %12.6f -- %8d %12.4e %12.4e", (int)entry.i, rounds,
 		time_native, time_mint,
 		counter,
 		counter == N ? 0.0 : sqrt(error_sum / (N - counter)),
