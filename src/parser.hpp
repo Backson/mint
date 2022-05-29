@@ -8,21 +8,9 @@
 #include "ops.hpp"
 #include "tokens.hpp"
 #include "ast.hpp"
+#include "tokenizer.hpp"
 
 #include <vector>
-
-class Tokenizer {
-public:
-	Tokenizer(const char * str) : str(str), next(str) {};
-
-	Token getNextToken();
-
-private:
-	const char * str = nullptr;
-	const char * next = nullptr;
-
-	Token tok;
-};
 
 class Parser {
 public:

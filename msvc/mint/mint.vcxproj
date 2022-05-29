@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\src\optimizations.cpp" />
     <ClCompile Include="..\..\src\parser.cpp" />
     <ClCompile Include="..\..\src\program.cpp" />
+    <ClCompile Include="..\..\src\tokenizer.cpp" />
     <ClCompile Include="..\..\src\tokens.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +34,7 @@
     <ClInclude Include="..\..\src\optimizations.hpp" />
     <ClInclude Include="..\..\src\parser.hpp" />
     <ClInclude Include="..\..\src\program.hpp" />
+    <ClInclude Include="..\..\src\tokenizer.hpp" />
     <ClInclude Include="..\..\src\tokens.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
