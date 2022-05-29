@@ -1,5 +1,5 @@
 // This file is part of MINT.  MINT is a Math INTerpreter.
-// Copyright (C) 2015 Lars Droegemueller
+// Copyright (C) 2015 Lars Dammann
 // See LICENSE file for details
 
 #include "parser.hpp"
