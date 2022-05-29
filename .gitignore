@@ -1,7 +1,6 @@
 # windows build system
 msvc/**/x64/
 msvc/**/Win32/
-msvc/.vs
 msvc/Build
 msvc/mint.opensdf
 msvc/mint.sdf
@@ -9,3 +8,4 @@ msvc/mint.*.suo
 *.VC.db
 *.VC.VC.opendb
 .suo
+.vs
