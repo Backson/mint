@@ -176,7 +176,6 @@ TEST(TokenizerTests, CallPow) {
 	EXPECT_EQ(TOK_EOF, tok.id);
 }
 
-
 TEST(TokenizerTests, TwoPi) {
 	Tokenizer tokenizer("2pi");
 
@@ -186,6 +185,66 @@ TEST(TokenizerTests, TwoPi) {
 
 	tok = tokenizer.getNextToken();
 	EXPECT_EQ(TOK_F_PI, tok.id);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_EOF, tok.id);
+}
+
+TEST(TokenizerTests, SignPlus) {
+	Tokenizer tokenizer("+1.0");
+
+	Token tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_PLUS, tok.id);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_LIT, tok.id);
+	EXPECT_EQ(1, tok.d);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_EOF, tok.id);
+}
+
+TEST(TokenizerTests, SignMinus) {
+	Tokenizer tokenizer("-1.0");
+
+	Token tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_MINUS, tok.id);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_LIT, tok.id);
+	EXPECT_EQ(1, tok.d);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_EOF, tok.id);
+}
+
+TEST(TokenizerTests, ExpNotation) {
+	Tokenizer tokenizer("123.456e+089");
+
+	Token tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_LIT, tok.id);
+	EXPECT_EQ(123.456e89, tok.d);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_EOF, tok.id);
+}
+
+TEST(TokenizerTests, TenPowMinusTwo) {
+	Tokenizer tokenizer("10^-2");
+
+	Token tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_LIT, tok.id);
+	EXPECT_EQ(10, tok.d);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_OP_POW, tok.id);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_MINUS, tok.id);
+
+	tok = tokenizer.getNextToken();
+	EXPECT_EQ(TOK_LIT, tok.id);
+	EXPECT_EQ(2, tok.d);
 
 	tok = tokenizer.getNextToken();
 	EXPECT_EQ(TOK_EOF, tok.id);
