@@ -23,7 +23,7 @@ enum State {
 	CONST,
 };
 
-Token Scanner::getNextToken() {
+Token Tokenizer::getNextToken() {
 	tok = {TOK_ERROR, nullptr, -1, -1};
 	State state = START;
 	while (state != TERM) {

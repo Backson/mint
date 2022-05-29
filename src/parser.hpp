@@ -11,9 +11,9 @@
 
 #include <vector>
 
-class Scanner {
+class Tokenizer {
 public:
-	Scanner(const char * str) : str(str), next(str) {};
+	Tokenizer(const char * str) : str(str), next(str) {};
 
 	Token getNextToken();
 
@@ -42,7 +42,7 @@ private:
 	void emitOp(Ast &ast);
 	void emitOp(Ast &&ast);
 
-	Scanner scanner;
+	Tokenizer scanner;
 	Token tok;
 	Ast ast;
 	int lastTokenId;
