@@ -1,3 +1,4 @@
 # windows build system
-build
-.vs
+build/
+.vs/
+/packages/
