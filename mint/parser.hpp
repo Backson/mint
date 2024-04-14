@@ -14,7 +14,7 @@
 
 class Parser {
 public:
-	Parser(const char * str) : scanner(str) {}
+	Parser(const char * str) : tokenizer(str) {}
 	
 	int parse();
 	const char * getError() { return error; }
@@ -30,7 +30,7 @@ private:
 	void emitOp(Ast &ast);
 	void emitOp(Ast &&ast);
 
-	Tokenizer scanner;
+	Tokenizer tokenizer;
 	Token tok;
 	Ast ast;
 	int lastTokenId;

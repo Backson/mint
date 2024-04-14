@@ -15,7 +15,7 @@ int Parser::parse() {
 	ast.i = 0;
 	lastTokenId = TOK_NONE;
 	lastOp = -1;
-	tok = scanner.getNextToken();
+	tok = tokenizer.getNextToken();
 	while (tok.id != TOK_EOF) {
 		bool expectUnary = lastTokenId == TOK_LPAREN
 			|| lastTokenId == TOK_NONE
@@ -184,7 +184,7 @@ int Parser::parse() {
 		}
 
 		lastTokenId = tok.id;
-		tok = scanner.getNextToken();
+		tok = tokenizer.getNextToken();
 	}
 
 	if (!canBeValue(lastTokenId)) {
