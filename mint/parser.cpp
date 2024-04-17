@@ -9,6 +9,8 @@
 #include "ast.hpp"
 #include "ops.hpp"
 
+using std::move;
+
 int Parser::parse() {
 	std::stack<Token> stack;
 	ast.op = OP_HLT;
@@ -205,20 +207,19 @@ int Parser::parse() {
 }
 
 void Parser::emitOp(Op op, int i) {
-	Ast &&ast = Ast::create(op);
+	Ast ast(op);
 	ast.i = i;
-	emitOp(ast);
+	emitOp(move(ast));
 }
 
 void Parser::emitOp(Op op, double d) {
-	Ast &&ast = Ast::create(op);
+	Ast ast(op);
 	ast.d = d;
-	emitOp(ast);
+	emitOp(move(ast));
 }
 
-void Parser::emitOp(Ast &ast) {
-	Ast copy = ast;
-	emitOp(std::move(copy));
+void Parser::emitOp(const Ast &ast) {
+	emitOp(Ast(ast));
 }
 
 void Parser::emitOp(Ast &&ast) {
@@ -235,6 +236,6 @@ void Parser::emitOp(Ast &&ast) {
 	lastOp = ast.op;
 }
 
-void Parser::raiseError(const char * reason) {
+void Parser::raiseError(const char *reason) {
 	error = reason;
 }

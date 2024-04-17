@@ -10,21 +10,55 @@
 #include <vector>
 
 struct Ast {
-	Op op;
+	Op op = OP_INVALID;
 	std::vector<Ast> children;
 	union {
 		double d;
 		long i;
 		char str[8];
 	};
-	size_t stack_size_needed;
+	size_t stack_size_needed = 0;
 
-	static inline Ast create(Op op = OP_INVALID) {
-		Ast result;
-		memset(&result, 0, sizeof(Ast));
-		result.op = op;
-		result.stack_size_needed = 0;
-		return result;
+	Ast(Op op = OP_INVALID) :
+		op(op)
+	{
+		memset(&str, 0, sizeof(str));
+	}
+
+	~Ast() = default;
+
+	Ast(const Ast &other)
+	{
+		op = other.op;
+		children = other.children;
+		memcpy(&str, &other.str, sizeof(str));
+		stack_size_needed = other.stack_size_needed;
+	}
+
+	Ast &operator=(const Ast &other)
+	{
+		op = other.op;
+		children = other.children;
+		memcpy(&str, &other.str, sizeof(str));
+		stack_size_needed = other.stack_size_needed;
+		return *this;
+	}
+
+	Ast(Ast &&other) noexcept
+	{
+		op = other.op;
+		children = move(other.children);
+		memcpy(&str, &other.str, sizeof(str));
+		stack_size_needed = other.stack_size_needed;
+	}
+
+	Ast &operator=(Ast &&other) noexcept
+	{
+		op = other.op;
+		children = move(other.children);
+		memcpy(&str, &other.str, sizeof(str));
+		stack_size_needed = other.stack_size_needed;
+		return *this;
 	}
 };
 

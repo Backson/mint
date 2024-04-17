@@ -27,7 +27,7 @@ private:
 	
 	void emitOp(Op op, int i = 0);
 	void emitOp(Op op, double d);
-	void emitOp(Ast &ast);
+	void emitOp(const Ast &ast);
 	void emitOp(Ast &&ast);
 
 	Tokenizer tokenizer;
