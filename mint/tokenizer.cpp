@@ -128,11 +128,35 @@ static void ident_helper(Token &tok, const char *next) {
 	}
 }
 
+static inline bool is_digit(char c) {
+	return std::isdigit(c);
+}
+
+static inline bool is_alpha(char c) {
+	return std::isalpha(c);
+}
+
+static inline bool is_space(char c) {
+	return std::isspace(c);
+}
+
+static inline unsigned long parse_ulong(const char *begin, const char **end) {
+	return std::strtoul(begin, (char **)end, 10);
+}
+
+static inline long parse_long(const char *begin, const char **end) {
+	return std::strtol(begin, (char **)end, 10);
+}
+
+static inline double parse_double(const char *begin, const char **end) {
+	return std::strtod(begin, (char **)end);
+}
+
 Token Tokenizer::getNextToken() {
 	tok = { TOK_ERROR, nullptr, -1, -1 };
 
 	// eat whitespace
-	while (std::isspace(*next))
+	while (is_space(*next))
 		++next;
 
 	// start new token
@@ -145,11 +169,11 @@ Token Tokenizer::getNextToken() {
 	}
 	else if (*next == '$') {
 		++next;
-		if (!isdigit(*next)) {
+		if (!is_digit(*next)) {
 			tok.err = "Expected digit after '$'";
 		}
 		else {
-			tok.i = strtoul(next, const_cast<char**>(&next), 10) - 1;
+			tok.i = parse_ulong(next, &next) - 1;
 			tok.id = TOK_ARG;
 		}
 	}
@@ -185,19 +209,19 @@ Token Tokenizer::getNextToken() {
 		++next;
 		tok.id = TOK_OP_POW;
 	}
-	else if (isalpha(*next)) {
+	else if (is_alpha(*next)) {
 		// consume all alphanumeric characters
 		++next;
-		while (isalpha(*next))
+		while (is_alpha(*next))
 			++next;
 
 		// check if this is a known identifier, like "cos" or "pi"
 		ident_helper(tok, next);
 	}
-	else if (isdigit(*next) || *next == '.') {
-		char* end = nullptr;
-		tok.d = strtod(next, const_cast<char**>(&end));
-		if (end == next) {
+	else if (is_digit(*next) || *next == '.') {
+		const char *end = nullptr;
+		tok.d = parse_double(next, &end);
+		if (end == nullptr || end == next) {
 			tok.err = "decimal conversion failed";
 		}
 		else {
