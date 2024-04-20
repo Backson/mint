@@ -24,9 +24,17 @@ struct Ast {
 	{
 		memset(&str, 0, sizeof(str));
 	}
+
+	bool equals(const Ast &) const;
 };
 
+inline bool operator == (const Ast &lhs, const Ast &rhs) {
+	return lhs.equals(rhs);
+}
 
+inline bool operator != (const Ast &lhs, const Ast &rhs) {
+	return !lhs.equals(rhs);
+}
 
 void print(const Ast &ast);
 

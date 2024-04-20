@@ -27,6 +27,23 @@ static void print(const Ast &ast, int indent) {
 	}
 }
 
+bool Ast::equals(const Ast &other) const
+{
+	if (this == &other)
+		return true;
+	if (op != other.op)
+		return false;
+	if (children.size() != other.children.size())
+		return false;
+	if (memcmp(&str, &other.str, sizeof(str)) != 0)
+		return false;
+	for (size_t i = 0; i < children.size(); ++i) {
+		if (!children[i].equals(other.children[i]))
+			return false;
+	}
+	return true;
+}
+
 void print(const Ast &ast) {
 	print(ast, 0);
 }

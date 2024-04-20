@@ -113,3 +113,22 @@ TEST_F(AstTests, YPlus5Moved_OpIsAdd) {
 TEST_F(AstTests, YPlus5Moved_HasTwoChildren) {
 	EXPECT_EQ(2, y_plus_5_moved_to_ast.children.size());
 }
+
+TEST_F(AstTests, Default_eq_DefaultCopied) {
+	EXPECT_TRUE(default_ast == default_copied_ast);
+}
+
+TEST_F(AstTests, YPlus5_eq_YPlus5Copy) {
+	EXPECT_TRUE(y_plus_5_ast == y_plus_5_copied_ast);
+	EXPECT_FALSE(y_plus_5_ast != y_plus_5_copied_ast);
+}
+
+TEST_F(AstTests, YPlus5_eq_YPlus5Moved) {
+	EXPECT_TRUE(y_plus_5_ast == y_plus_5_moved_to_ast);
+	EXPECT_FALSE(y_plus_5_ast != y_plus_5_moved_to_ast);
+}
+
+TEST_F(AstTests, VarY_neq_Const5) {
+	EXPECT_TRUE(var_y_ast != const_5_ast);
+	EXPECT_FALSE(var_y_ast == const_5_ast);
+}
