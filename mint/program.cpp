@@ -38,8 +38,8 @@ Program::Program(const char * src, int optimize) {
 		break;
 	case OPTIMIZE_STRICT:
 		optimizer.optimizePowersToIntegerExponents(&ast);
-		optimizer.collapseConstants(&ast);
-		optimizer.collapseSigns(&ast);
+		optimizer.foldConstants(&ast);
+		optimizer.foldDoubleMinus(&ast);
 		optimizer.compressStack(&ast);
 		break;
 	}

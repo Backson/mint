@@ -49,8 +49,9 @@
     <IntDir>build\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="ast.cpp" />
-    <ClCompile Include="tokenizer.cpp" />
+    <ClCompile Include="ast_tests.cpp" />
+    <ClCompile Include="optimizations_tests.cpp" />
+    <ClCompile Include="tokenizer_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mint\mint.vcxproj">
